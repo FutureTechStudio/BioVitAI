@@ -1,0 +1,504 @@
+{
+  "package": "BiovitAI consolidated documentation v2.1",
+  "prepared_at": "2026-10-20",
+  "original_zip_sha256": "091f4b6a66f044406518394afbf2930dd486ac396e09432eb1a603da866d39d5",
+  "v2_1_update_zip_sha256": "b52e26efe654c96c6b2b669d7df58887e773abcf1ace4a69488d84826184fa64",
+  "v2_files": 44,
+  "v2_1_numbered_files": 16,
+  "working_requirements_count": 60,
+  "tracker_task_count": 51,
+  "original_file_integrity": [
+    {
+      "file": "00-README.md",
+      "v2_file_sha256": "bdb99e7928c5933ad76d3ab524739687e5f8ecdf22c0627c0cedf29153622ab4",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "da8ef58fc01e3221afee2be185f851d85d721f2f3583f394b8d9885fed38640c",
+      "addenda": [
+        "44-PRODUCT-ARCHITECTURE-AND-NAVIGATION.md",
+        "51-PHASED-ROADMAP-AND-GATES.md"
+      ]
+    },
+    {
+      "file": "01-PRODUCT-VISION-AND-SCOPE.md",
+      "v2_file_sha256": "5765d77ac790d9db3a3880ece0ca00d3b90762aeb3678ca55a01f2e22fd14022",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "a2130a1e6e3631685f2bffb78bf3b831d195462a509cad5e38c448e062d93e60",
+      "addenda": [
+        "44-PRODUCT-ARCHITECTURE-AND-NAVIGATION.md",
+        "45-WELLNESS-BEHAVIOR-CHANGE-ENGINE.md",
+        "46-COMMUNITY-AND-MEDICAL-TRENDS.md"
+      ]
+    },
+    {
+      "file": "02-PERSONAS-AND-USER-JOURNEYS.md",
+      "v2_file_sha256": "e3f5bad8573ad65f0ecb6f5cf466072c2d6b931015757a5e016a3811a74586c9",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "6fd9beaad78ca2f7ec4ac15891bfdbd932bcc540269d1d24e88a56156e2a9542",
+      "addenda": [
+        "45-WELLNESS-BEHAVIOR-CHANGE-ENGINE.md",
+        "58-UX-FLOWS-AND-ACCESSIBILITY.md"
+      ]
+    },
+    {
+      "file": "03-ONBOARDING-AND-AUTH.md",
+      "v2_file_sha256": "398943ed5e31f51594bea1fa8fcfb4b20dd8453f134d9617f11447b91c499383",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "931cc49ea6f70e1d34871ba628c6a537d7bd8f491943dbc90e39cf5dce82c708",
+      "addenda": [
+        "44-PRODUCT-ARCHITECTURE-AND-NAVIGATION.md",
+        "52-PRIVACY-CLINICAL-SAFETY-AND-GOVERNANCE.md",
+        "58-UX-FLOWS-AND-ACCESSIBILITY.md"
+      ]
+    },
+    {
+      "file": "04-PROFILES-AND-FAMILY-ACCESS.md",
+      "v2_file_sha256": "77f49ba224a1127dcc85cfe595af1bcf2983f7f95eb35c26634995b7b3b28653",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "d022306eac7d99bcc7550e7a9330a912a48ba97603895e9d13adbd3ddd75fd58",
+      "addenda": [
+        "44-PRODUCT-ARCHITECTURE-AND-NAVIGATION.md",
+        "47-MODULAR-ARCHITECTURE-AND-BOUNDARIES.md",
+        "52-PRIVACY-CLINICAL-SAFETY-AND-GOVERNANCE.md"
+      ]
+    },
+    {
+      "file": "05-REPORT-UPLOAD-AND-INGESTION.md",
+      "v2_file_sha256": "307338301a74c800e0710dd8184424178d77c4d8c2cbdda8bdac46d08caa460f",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "880482fdcc18106a6590ad4ed3292f170d0cba23f81edaff3e2e14050c079893",
+      "addenda": [
+        "56-OBSERVATION-PROVENANCE-AND-AGGREGATION.md"
+      ]
+    },
+    {
+      "file": "06-OCR-EXTRACTION-AND-VERIFICATION.md",
+      "v2_file_sha256": "0f63f51f39098e525649e03bd1d1d545e5e25f18d8d56ec995399d3707a08d11",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "0c4c50779f35b7f68615128b488700bd06a39a5d070df804615e53979bd2e00c",
+      "addenda": [
+        "56-OBSERVATION-PROVENANCE-AND-AGGREGATION.md"
+      ]
+    },
+    {
+      "file": "07-CANONICAL-HEALTH-DATA-MODEL.md",
+      "v2_file_sha256": "f0e07fec72c3e6078300d4f31c674224817df1d310de70a89c3a2b6c3a0ea55d",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "542d65aae91191f2242f900ff679220c1064fbe020fe20199d8386f5f589236a",
+      "addenda": [
+        "49-DATA-CONTRACTS-AND-EVENTS.md",
+        "56-OBSERVATION-PROVENANCE-AND-AGGREGATION.md"
+      ]
+    },
+    {
+      "file": "08-LONGITUDINAL-TRENDS.md",
+      "v2_file_sha256": "0deb6f333bf014152ac6e70c6beb4a9868baadd5d0a0bf3f1e96172908d90679",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "6d65c341742115c2130a15d33660537b3a7f1fe7f23c63111bcdf5231061f26b",
+      "addenda": [
+        "56-OBSERVATION-PROVENANCE-AND-AGGREGATION.md"
+      ]
+    },
+    {
+      "file": "09-BIOMARKERS-AND-CLINICAL-INTERPRETATION.md",
+      "v2_file_sha256": "e8cebf961d05822253b4aff683962b99f0c021f4f21cb5bcbe02c7b065f5c49b",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "7826a40d48e0ce20e15a9ef3ecd1ef2f5b30669b1492ade3d7b23613162775c1",
+      "addenda": [
+        "56-OBSERVATION-PROVENANCE-AND-AGGREGATION.md"
+      ]
+    },
+    {
+      "file": "10-MY-PROFILE-AND-BODY-MAP.md",
+      "v2_file_sha256": "6bd7e4830eea2a98e42bb550836a92d781b1fc8bf45386fad957708a6a364b0b",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "4e0b39c6b29e6f988af68a034afdd585043edf12147001268170e7557533abbb",
+      "addenda": [
+        "44-PRODUCT-ARCHITECTURE-AND-NAVIGATION.md",
+        "56-OBSERVATION-PROVENANCE-AND-AGGREGATION.md",
+        "58-UX-FLOWS-AND-ACCESSIBILITY.md"
+      ]
+    },
+    {
+      "file": "11-ORGAN-DRILLDOWN.md",
+      "v2_file_sha256": "a5112a8e8594850aaf40b6c7f22f750ac764599fd0b1048dad1c52541c96e724",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "0b67f1a286f9130bb516ad7c2965bc3afd348ff6b72ea98fb8f09c4194f8af8e",
+      "addenda": [
+        "44-PRODUCT-ARCHITECTURE-AND-NAVIGATION.md",
+        "56-OBSERVATION-PROVENANCE-AND-AGGREGATION.md",
+        "58-UX-FLOWS-AND-ACCESSIBILITY.md"
+      ]
+    },
+    {
+      "file": "12-CONDITION-TRACKING.md",
+      "v2_file_sha256": "c49456aa387c101909064d29f75da38efebed1aa6542892f86265e58750a6bbc",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "913a59a0284144ec1fafa61bf01ffd3e5ad8fa481018d67f9c809820be27ba27",
+      "addenda": [
+        "45-WELLNESS-BEHAVIOR-CHANGE-ENGINE.md",
+        "49-DATA-CONTRACTS-AND-EVENTS.md",
+        "52-PRIVACY-CLINICAL-SAFETY-AND-GOVERNANCE.md"
+      ]
+    },
+    {
+      "file": "13-LIFESTYLE-PLANS-AND-PROGRESS.md",
+      "v2_file_sha256": "fc53de1af2b2abe8d9e9c71f78d6843adbe77cf5dc3538885d31a19816b8f614",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "263e59e8f42938ef65095316bbf3e3c8acb449e90b0d331ad6e0bf2c71b583e6",
+      "addenda": [
+        "45-WELLNESS-BEHAVIOR-CHANGE-ENGINE.md"
+      ]
+    },
+    {
+      "file": "14-DEVICES-AND-MANUAL-ENTRY.md",
+      "v2_file_sha256": "b8a7d78a16b21c248f25bb6af353a97f49b711f074762a6a656d09ea59cd5da1",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "0160549a1ec25b0b333750634eb169c49a6321626fb4cf4f30994477f5c97c97",
+      "addenda": [
+        "45-WELLNESS-BEHAVIOR-CHANGE-ENGINE.md",
+        "49-DATA-CONTRACTS-AND-EVENTS.md"
+      ]
+    },
+    {
+      "file": "15-NOTIFICATIONS-AND-REMINDERS.md",
+      "v2_file_sha256": "fb7d99db93f5ece006a3750ad827c0e8a754c0b0edf7c4bf1079868aa3bc01e5",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "c2140da02c3183742b67fc0d3b5a67d53df1fdcde89be027f6bda5108d23cad7",
+      "addenda": [
+        "45-WELLNESS-BEHAVIOR-CHANGE-ENGINE.md"
+      ]
+    },
+    {
+      "file": "16-REPORTS-AND-DATA-LIBRARY.md",
+      "v2_file_sha256": "da547511ec781eb74a0be4c32523e813418e31b1767b1a58406057378601a39a",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "0975ed91e1ff9a4888a3be9c7f8226d66f5e9e09a81da2a19f34924e9857a442",
+      "addenda": [
+        "49-DATA-CONTRACTS-AND-EVENTS.md",
+        "56-OBSERVATION-PROVENANCE-AND-AGGREGATION.md"
+      ]
+    },
+    {
+      "file": "17-EXPORTS-AND-SHARING.md",
+      "v2_file_sha256": "2cd4bd708fd141c8474ed750563303d5d1a7d7ee4352e00c12fbfba74ff7c30e",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "f33f8ae79dd6d848cfc79c9253b10e33be97f4217a389d542ee0e52339ac0924",
+      "addenda": [
+        "52-PRIVACY-CLINICAL-SAFETY-AND-GOVERNANCE.md",
+        "49-DATA-CONTRACTS-AND-EVENTS.md"
+      ]
+    },
+    {
+      "file": "18-PRIVACY-SECURITY-AND-CONSENT.md",
+      "v2_file_sha256": "9568c2deccbc6513586e1d964be6825921255c2d3a87784e32820dd67d34bc18",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "8b6f3bab92415a6c7d151ffe9b22f1fa8bb3123e76637c1c97100800e0c33b35",
+      "addenda": [
+        "52-PRIVACY-CLINICAL-SAFETY-AND-GOVERNANCE.md"
+      ]
+    },
+    {
+      "file": "19-ARCHITECTURE-AND-INFRASTRUCTURE.md",
+      "v2_file_sha256": "7d5e12e31ad4e6db15028a8a0879fcc153f8ca86170b8db2bcf19295b622ea3f",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "cfdaebb6d276dedd7ff9fa216d157a5755af62b2936825fa36aa5cf17e409a6f",
+      "addenda": [
+        "47-MODULAR-ARCHITECTURE-AND-BOUNDARIES.md",
+        "48-AI-GATEWAY-AND-AGENT-SERVICES.md"
+      ]
+    },
+    {
+      "file": "20-REST-API-AND-EVENTS.md",
+      "v2_file_sha256": "ffeac8c8754c57c46f83d1228b37fe9f99025576d1095f4d839bc0b91a96caf9",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "42d308a2d4eeaa12a83c429dfe8de2f6bc0aa7e16618334d7344dee267ade78e",
+      "addenda": [
+        "49-DATA-CONTRACTS-AND-EVENTS.md"
+      ]
+    },
+    {
+      "file": "21-WEB-AND-MOBILE-UI-SPEC.md",
+      "v2_file_sha256": "74e0b3f38904ef89233e38dff5a773c47e739bb42d2310af76debf3014956617",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "c83825cd8fa09dd122a589d550d9e2050ad9db591819816c90ff5bc010d0c230",
+      "addenda": [
+        "44-PRODUCT-ARCHITECTURE-AND-NAVIGATION.md",
+        "58-UX-FLOWS-AND-ACCESSIBILITY.md"
+      ]
+    },
+    {
+      "file": "22-ACCESSIBILITY-AND-LOCALIZATION.md",
+      "v2_file_sha256": "d0ac3190ce8c57e6c87b3776b560fe7de5d7f17c3111f9a7ca18512a8d4db75f",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "8e6b32615fe9b283528a673c3ce27d6ad79cb006642f67f2a41bd6928f6f8c1c",
+      "addenda": [
+        "58-UX-FLOWS-AND-ACCESSIBILITY.md",
+        "52-PRIVACY-CLINICAL-SAFETY-AND-GOVERNANCE.md"
+      ]
+    },
+    {
+      "file": "23-QA-AND-ACCEPTANCE.md",
+      "v2_file_sha256": "77678ad1b27e7b009c2e7d8503ae5ee478f98583aacb2e8ba0250a69b216e301",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "7bf767eec6dfaa027de5942bc50ce274a3cd265e6d3440b9dc079fde30ef38a3",
+      "addenda": [
+        "53-TESTING-EVALUATION-AND-OUTCOMES.md"
+      ]
+    },
+    {
+      "file": "24-ROADMAP-AND-BACKLOG.md",
+      "v2_file_sha256": "f5cac0def60f48f5d0b44ce132e094c2a20352c4bbb872cc186c41bd0bdc9e69",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "bfc64767d8b403eea32204639fc0676983ee8ddcc059db60c53534e01757b56a",
+      "addenda": [
+        "51-PHASED-ROADMAP-AND-GATES.md",
+        "54-IMPLEMENTATION-TRACKER-WORKFLOW.md"
+      ]
+    },
+    {
+      "file": "25-SCREEN-INVENTORY-AND-UX-FLOWS.md",
+      "v2_file_sha256": "4ab3be31a22344451efa3161fa3425659ff4200292daf2a516847735173b038c",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "bf351fc03cbc4ab726ae12735f3472fda41e8ad616c80e3359bdac9452eab80b",
+      "addenda": [
+        "58-UX-FLOWS-AND-ACCESSIBILITY.md"
+      ]
+    },
+    {
+      "file": "26-DAD-FIRST-PILOT-AND-DECISIONS.md",
+      "v2_file_sha256": "4c09caba630a4ecab54cd2fffa71b9b7b42ce4db3d4a68b5149c4b1bab0a186a",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "ef7a23cf0b954f74e17698540e45356a98b387722f7fbcc816802ea736c66d7a",
+      "addenda": [
+        "51-PHASED-ROADMAP-AND-GATES.md",
+        "53-TESTING-EVALUATION-AND-OUTCOMES.md",
+        "56-OBSERVATION-PROVENANCE-AND-AGGREGATION.md"
+      ]
+    },
+    {
+      "file": "27-AI-CHAT-PRODUCT-REQUIREMENTS.md",
+      "v2_file_sha256": "748232fbf57f3c87a8c8acf6f2fc706f68dffa318b8d9e076e7535a378a93df5",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "f29f8f8aee5115baf891bb4304d764cc1847897970c7b0b469b765111f7fcb15",
+      "addenda": [
+        "48-AI-GATEWAY-AND-AGENT-SERVICES.md",
+        "57-AI-TOOL-CATALOG-AND-UI-BLOCKS.md"
+      ]
+    },
+    {
+      "file": "28-AI-ORCHESTRATION-AND-TOOL-CALLING.md",
+      "v2_file_sha256": "9aeea14eb6a25713f84b1563be410baabed30b3139257aefb1965b19524af163",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "e2cde37a333463b4fdd1d49e90e5f0a924feeafc47bad248de389c6a43fbcd02",
+      "addenda": [
+        "48-AI-GATEWAY-AND-AGENT-SERVICES.md"
+      ]
+    },
+    {
+      "file": "29-AI-TOOL-CATALOG.md",
+      "v2_file_sha256": "17f338136dbbde1618a79f5aadc61414bf2dcdf58e33f8c3d6c7114f8cc2693f",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "2c397657865656e278620912070d0e669aea72116204b251e2106b70444efaa0",
+      "addenda": [
+        "57-AI-TOOL-CATALOG-AND-UI-BLOCKS.md"
+      ]
+    },
+    {
+      "file": "30-CONTEXT-MANIFEST-AND-DATA-DISCOVERY.md",
+      "v2_file_sha256": "560b41ee1bdfded8875413c98792aa91f2ae5b2244982e90e1c75a30a341c7b9",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "5e2012a3057209f9d6e045509ebb1b70d053a3b043955cf9d99354d5afa4f93f",
+      "addenda": [
+        "48-AI-GATEWAY-AND-AGENT-SERVICES.md"
+      ]
+    },
+    {
+      "file": "31-REPORT-COMPARISON-PIPELINE.md",
+      "v2_file_sha256": "cc3fe991c06dc29fa54ed81d2379217b9a7bc6e85c106213a5fbe23ba52d09e0",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "7049d764427442280f7d51955dddd951ecd225c0a2a55787448b1fe79e302fb2",
+      "addenda": [
+        "56-OBSERVATION-PROVENANCE-AND-AGGREGATION.md"
+      ]
+    },
+    {
+      "file": "32-CLINICAL-ANALYTICS-AND-PATTERN-RULES.md",
+      "v2_file_sha256": "8115af2640eb6f005b3dc456dd5c2e45788c30409c1937aee206f5f476056938",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "8732607b3d9a8b5ae80981d76381a4b49df29648852cfc249a72fae514fb71ad",
+      "addenda": [
+        "45-WELLNESS-BEHAVIOR-CHANGE-ENGINE.md",
+        "56-OBSERVATION-PROVENANCE-AND-AGGREGATION.md"
+      ]
+    },
+    {
+      "file": "33-AI-CHAT-UX-AND-RENDERABLE-BLOCKS.md",
+      "v2_file_sha256": "fbf96d4eab1d42df8dfafc607cc3ec74af49a1bf7ce63eb056fc40f5a591f8ed",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "dbff0f487ad14617c8bb2cc80819c96b02a03302c88a7f47477144879df63cfa",
+      "addenda": [
+        "57-AI-TOOL-CATALOG-AND-UI-BLOCKS.md"
+      ]
+    },
+    {
+      "file": "34-AI-PROMPTS-AND-GUARDRAILS.md",
+      "v2_file_sha256": "9d23b7ea913818b28771dddb78f39ed1376ceb72b2c596b010f36117a75567a2",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "de43d181af3f24884c141e2c785a8e7b69e0ba44a943888edb5d1bdedeb12200",
+      "addenda": [
+        "48-AI-GATEWAY-AND-AGENT-SERVICES.md"
+      ]
+    },
+    {
+      "file": "35-CONVERSATION-MEMORY-AND-RAG.md",
+      "v2_file_sha256": "9780d4344170a705d05ee3dce093107db64c5affa510597005f2799eae9ac7b7",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "cc299879668e0cf51a6d3568e060e9e0be414863cb4bbbeea82499cd3a326d41",
+      "addenda": [
+        "48-AI-GATEWAY-AND-AGENT-SERVICES.md",
+        "52-PRIVACY-CLINICAL-SAFETY-AND-GOVERNANCE.md",
+        "57-AI-TOOL-CATALOG-AND-UI-BLOCKS.md"
+      ]
+    },
+    {
+      "file": "36-AI-SECURITY-PRIVACY-AND-CONSENT.md",
+      "v2_file_sha256": "b51f5af7d5bbec17beaa4fe660abfe403f9c0c12864fdd4f4fa2f54e224294f0",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "533a7255703f1209008182e96208376a2e42045525b56bd97b724c4d8ac7eb52",
+      "addenda": [
+        "52-PRIVACY-CLINICAL-SAFETY-AND-GOVERNANCE.md"
+      ]
+    },
+    {
+      "file": "37-AI-EVALUATION-AND-TEST-FIXTURES.md",
+      "v2_file_sha256": "512aff73960e03d94f52c44c66bbf04476950bb7bbaba88149f92bbde3892171",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "0b41a33e65945e800eba947e7c23f66478dda65bce033f7ee3cacbdecab9820d",
+      "addenda": [
+        "53-TESTING-EVALUATION-AND-OUTCOMES.md"
+      ]
+    },
+    {
+      "file": "38-AI-OBSERVABILITY-LATENCY-AND-COST.md",
+      "v2_file_sha256": "93ba3ef1425b7a4e4a961dda1904d8d0a829e7355a785db5fe35d85af35c2aa1",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "50410417fbc91065616f72fefc29774f5f78639c56ec8f3af71ef2e86077d91c",
+      "addenda": [
+        "59-OPERATIONS-COST-AND-SECURITY-RUNBOOK.md"
+      ]
+    },
+    {
+      "file": "39-AI-MVP-IMPLEMENTATION-PLAN.md",
+      "v2_file_sha256": "8e97ac0ea9e857c1423d35cf19616eb0b148fa2e57772a1624ee87a76a36a5fb",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "f1c458847a84ea8d3eba77c5903dac8184657e649ca3a2f07d9f1097a06babe5",
+      "addenda": [
+        "51-PHASED-ROADMAP-AND-GATES.md"
+      ]
+    },
+    {
+      "file": "40-DATABASE-MIGRATIONS-AND-SCHEMA.md",
+      "v2_file_sha256": "474d4601eec97dc196c504f4e5f1b683d1d00b062e94def20494ee2dd7b6ec9d",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "c31f4621031cede17f0353b0f82949c8c449d2be2dcb9a120497a18e24fa294d",
+      "addenda": [
+        "49-DATA-CONTRACTS-AND-EVENTS.md",
+        "56-OBSERVATION-PROVENANCE-AND-AGGREGATION.md"
+      ]
+    },
+    {
+      "file": "41-API-CONTRACTS-AND-EXAMPLE-PAYLOADS.md",
+      "v2_file_sha256": "5fd74b2e1f899a825270d2d6cf4d567d24b7791f9c243031a83f9ee20686b83a",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "78892efc2c7a71a56feb47e44491768b6439265d9bcd5b132fce1caff1b7ece0",
+      "addenda": [
+        "49-DATA-CONTRACTS-AND-EVENTS.md"
+      ]
+    },
+    {
+      "file": "42-AI-EDGE-CASES-AND-ACCEPTANCE.md",
+      "v2_file_sha256": "a8b7b53b71d6ce7d36a859984e8634065b50d027329bc5aac5f96c2967f2d3f4",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "42b109f82e4488c1d8c3e28f16f685a62cd7879fc7c69e74027e30fc4602ec54",
+      "addenda": [
+        "53-TESTING-EVALUATION-AND-OUTCOMES.md"
+      ]
+    },
+    {
+      "file": "43-OPEN-DECISIONS-AND-REFERENCES.md",
+      "v2_file_sha256": "1bb58924e71ba89b305af1e0196e2d665e5e8e19c2f4e4cb7a408ed9ea04d9aa",
+      "v2_body_preserved_exactly": true,
+      "updated_file_sha256": "653da258ac2889a2b7d16b97da2d7f444f6aa8a262aa8d8d2dd0dac20f724e36",
+      "addenda": [
+        "55-DECISIONS-RISKS-AND-DEPENDENCIES.md"
+      ]
+    }
+  ],
+  "new_files": [
+    {
+      "file": "44-PRODUCT-ARCHITECTURE-AND-NAVIGATION.md",
+      "sha256": "ac8a06fa1aae925255657a166bfb12acdb7a7d22b3411ef8c21234964d18c352"
+    },
+    {
+      "file": "45-WELLNESS-BEHAVIOR-CHANGE-ENGINE.md",
+      "sha256": "bed31ad188ae15cf297d24b810fedba354b9526b0021f39bd13ef54859b20513"
+    },
+    {
+      "file": "46-COMMUNITY-AND-MEDICAL-TRENDS.md",
+      "sha256": "f4961f6be2b327d72a44ea823e31cc421b214776efa8fb41f4ae99dcf38fe058"
+    },
+    {
+      "file": "47-MODULAR-ARCHITECTURE-AND-BOUNDARIES.md",
+      "sha256": "90d7972b13c27c53a4ef451eb2c123b35cae54ecdec66df87a1bde6b53799af3"
+    },
+    {
+      "file": "48-AI-GATEWAY-AND-AGENT-SERVICES.md",
+      "sha256": "b98e9568a4c1728895c27d1a4dd68a06e85b1665843837fa9412eb7568270da7"
+    },
+    {
+      "file": "49-DATA-CONTRACTS-AND-EVENTS.md",
+      "sha256": "41572fa4886edd9e6c015f71d6193e368807e3b35aa93bea86d2ee6512d1c199"
+    },
+    {
+      "file": "50-ENGINEERING-STANDARDS-AND-QUALITY.md",
+      "sha256": "f2c17cf2bfb07c044b70096401a3ca07450ffc12f1ca4576f69eb38ba4874063"
+    },
+    {
+      "file": "51-PHASED-ROADMAP-AND-GATES.md",
+      "sha256": "b5c1a1a16807d23b66ed0eeb0e7768a5326cffc880ca26571cdd9c79a279a270"
+    },
+    {
+      "file": "52-PRIVACY-CLINICAL-SAFETY-AND-GOVERNANCE.md",
+      "sha256": "3a46c1bcd04029941d75b8d729b82fdff5fc75b8fee43556db70d0a3346d24fa"
+    },
+    {
+      "file": "53-TESTING-EVALUATION-AND-OUTCOMES.md",
+      "sha256": "e9db1ad386507baa7cd74c107e1f52ace343b86c0df598eed74f1342035d9ac6"
+    },
+    {
+      "file": "54-IMPLEMENTATION-TRACKER-WORKFLOW.md",
+      "sha256": "29c6093cd736d60475b044f2fb51da624fcffea4bce373ebc30cc79ba54a904f"
+    },
+    {
+      "file": "55-DECISIONS-RISKS-AND-DEPENDENCIES.md",
+      "sha256": "12d4fdf0a8dfbd5443b1da11fd53915849fe5ed084ea25ce1ff47df317367e34"
+    },
+    {
+      "file": "56-OBSERVATION-PROVENANCE-AND-AGGREGATION.md",
+      "sha256": "e8ecda18efb2d9db2e7b79970dc3e59fcd7726008fa6820031e288adc8144d62"
+    },
+    {
+      "file": "57-AI-TOOL-CATALOG-AND-UI-BLOCKS.md",
+      "sha256": "e414bab2e5666da24d61108ccc84776057c1f23810cca90ceeb625af7f423420"
+    },
+    {
+      "file": "58-UX-FLOWS-AND-ACCESSIBILITY.md",
+      "sha256": "674a0574ef18f13cc9e69d02513779312602d3209d66ef6b9f793ab6b0e57684"
+    },
+    {
+      "file": "59-OPERATIONS-COST-AND-SECURITY-RUNBOOK.md",
+      "sha256": "a772f7e6c0b51c3ef3e01cd21681da254a30fb1fdea653926967d4a6225d22e5"
+    }
+  ],
+  "implementation_status": "not started or verified; tracker is a planning baseline"
+}

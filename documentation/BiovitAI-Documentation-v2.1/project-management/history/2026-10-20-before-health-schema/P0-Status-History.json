@@ -1,0 +1,136 @@
+[
+  {
+    "date": "2026-10-20",
+    "taskId": "BV-001",
+    "from": "Backlog",
+    "to": "In Review",
+    "evidence": "Navigation and journeys prepared in docs/p0/REVIEW-PACKET.md; Product/UX signoff pending."
+  },
+  {
+    "date": "2026-10-20",
+    "taskId": "BV-002",
+    "from": "Backlog",
+    "to": "Blocked",
+    "evidence": "BV-001 not approved. Proposed docs/adr/ADR-001-modular-monolith.md and executable import boundary checks prepared; Tech Lead acceptance and DEC-002 pending."
+  },
+  {
+    "date": "2026-10-20",
+    "taskId": "BV-003",
+    "from": "Backlog",
+    "to": "Blocked",
+    "evidence": "BV-001 not approved. Draft docs/p0/THREAT-MODEL.md includes access matrix, flow, threats and residual decisions; Security/Privacy approval pending."
+  },
+  {
+    "date": "2026-10-20",
+    "taskId": "BV-004",
+    "from": "Backlog",
+    "to": "Blocked",
+    "evidence": "BV-001 not approved. Golden-set/review charter prepared in docs/p0/REVIEW-PACKET.md; named independent clinical reviewer and backup not appointed."
+  },
+  {
+    "date": "2026-10-20",
+    "taskId": "BV-005",
+    "from": "Backlog",
+    "to": "Blocked",
+    "evidence": "BV-002 not accepted. Preparatory local npm monorepo/tooling/contracts and CI definition pass 8 tests, lint, format, types and build. Fresh-install evidence in docs/p0/EXECUTION-REPORT.md. No PR/reviewer signoff; no dependency waiver."
+  },
+  {
+    "date": "2026-10-20",
+    "taskId": "BV-006",
+    "from": "Backlog",
+    "to": "Blocked",
+    "evidence": "BV-002/BV-003 incomplete. Proposed docs/adr/ADR-002-ai-gateway.md and shared/contracts schemas/provider port prepared with negative contract tests; AI Lead/Security review pending; no Gateway implementation."
+  },
+  {
+    "date": "2026-10-20",
+    "taskId": "BV-007",
+    "from": "Backlog",
+    "to": "Blocked",
+    "evidence": "BV-003 incomplete. Recommendations in docs/p0/REVIEW-PACKET.md; DEC-001/006/009 remain Open. Product/Legal decisions and named legal reviewer pending."
+  },
+  {
+    "date": "2026-10-20",
+    "taskId": "BV-004",
+    "from": "Blocked",
+    "to": "Backlog",
+    "evidence": "2026-10-20: Owner deferred specialist reviewer appointment to Backlog for pilot/UAT development. Original acceptance criteria retained; no reviewer appointed. Evidence: docs/p0/REVIEW-DEFERRAL.md."
+  },
+  {
+    "date": "2026-10-20",
+    "taskId": "BV-001",
+    "from": "In Review",
+    "to": "In Review",
+    "evidence": "2026-10-20: Owner confirmed three-tab scope and shared assistant/profile picker. Owner approval recorded in docs/p0/approvals.json; navigation/journeys in docs/p0/REVIEW-PACKET.md. Engineering review evidence remains separate."
+  },
+  {
+    "date": "2026-10-20",
+    "taskId": "BV-002",
+    "from": "Blocked",
+    "to": "In Review",
+    "evidence": "2026-10-20: Owner accepted stack/topology; ADR-001 updated and module boundaries tested. In Review for engineering acceptance; no independent specialist signoff claimed. Evidence: docs/p0/CONTINUATION-02.md."
+  },
+  {
+    "date": "2026-10-20",
+    "taskId": "BV-005",
+    "from": "Blocked",
+    "to": "In Review",
+    "evidence": "2026-10-20: Runnable local API and PostgreSQL foundation; 20 baseline tests plus real database integration. Repeatable secret setup and clean native lifecycle verified; Docker config validated. In Review for acceptance. Evidence: docs/p0/CONTINUATION-02.md."
+  },
+  {
+    "date": "2026-10-20",
+    "taskId": "BV-003",
+    "from": "Blocked",
+    "to": "In Review",
+    "evidence": "2026-10-20: Local engineering prerequisite verified; full specialist/PR completion not claimed. Development acceptance: docs/p0/DEVELOPMENT-ACCEPTANCE.md. Owner scope/stack approvals recorded; specialist reviews deferred."
+  },
+  {
+    "date": "2026-10-20",
+    "taskId": "BV-006",
+    "from": "Blocked",
+    "to": "In Review",
+    "evidence": "2026-10-20: Local engineering prerequisite verified; full specialist/PR completion not claimed. Development acceptance: docs/p0/DEVELOPMENT-ACCEPTANCE.md. Owner scope/stack approvals recorded; specialist reviews deferred."
+  },
+  {
+    "date": "2026-10-20",
+    "taskId": "BV-007",
+    "from": "Blocked",
+    "to": "In Review",
+    "evidence": "2026-10-20: Local engineering prerequisite verified; full specialist/PR completion not claimed. Development acceptance: docs/p0/DEVELOPMENT-ACCEPTANCE.md. Owner scope/stack approvals recorded; specialist reviews deferred."
+  },
+  {
+    "date": "2026-10-20",
+    "taskId": "BV-008",
+    "from": "Backlog",
+    "to": "In Progress",
+    "evidence": "2026-10-20: Local Better Auth/PostgreSQL identity slice; verified-email requirement, database sessions, private local verification/reset capture, origin/body limits and revocation. Implementation/testing in progress."
+  },
+  {
+    "date": "2026-10-20",
+    "taskId": "BV-008",
+    "from": "In Progress",
+    "to": "In Review",
+    "evidence": "2026-10-20: Local Better Auth/PostgreSQL identity slice; verified-email requirement, database sessions, private local verification/reset capture, origin/body limits and revocation. Validated with real PostgreSQL and HTTP security tests; no external mail transport or production readiness claimed. Evidence: docs/engineering/IDENTITY-IMPLEMENTATION.md."
+  },
+  {
+    "date": "2026-10-20",
+    "taskId": "BV-009",
+    "from": "Backlog",
+    "to": "In Progress",
+    "evidence": "2026-10-20: Local self profiles, scoped single-use invitations, consent history, expiry/revocation and audit. Owner-authorized continuation from tested BV-008; implementation/testing in progress."
+  },
+  {
+    "date": "2026-10-20",
+    "taskId": "BV-009",
+    "from": "In Progress",
+    "to": "In Review",
+    "evidence": "2026-10-20: Local self profiles, scoped single-use invitations, consent history, expiry/revocation and audit. Real PostgreSQL/HTTP and concurrent revocation/replay tests pass. Evidence: docs/engineering/PROFILE-IMPLEMENTATION.md. Future worker/cache routes must adopt the tested policy; no absent pipelines or formal production completion claimed."
+  },
+  {
+    "date": "2026-10-20",
+    "taskId": "BV-009",
+    "from": "In Review",
+    "to": "In Review",
+    "recordType": "Scope amendment",
+    "evidence": "2026-10-20: Owner family-profile amendment: multiple managed profiles without email; optional private contact; later verified invitation; session-specific active context and stale-response guard. 25 baseline/client and 22 PostgreSQL/HTTP checks pass. Evidence: docs/engineering/PROFILE-CONTEXT.md. In Review: visible picker/screens and future worker/cache integrations remain pending."
+  }
+]

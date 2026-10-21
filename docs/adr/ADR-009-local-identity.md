@@ -1,0 +1,15 @@
+# ADR-009: PostgreSQL-backed local identity
+
+Status: Implemented for local synthetic development; BV-008 In Review. Date: 20 October 2026. Requirements: 03, 04, 18, 47, 49, 50.
+
+Use pinned Better Auth 1.7.12 behind the Identity module's ports rather than implementing password hashing, verification tokens and session cookies from scratch. PostgreSQL is the authoritative session store. Cookie caching is disabled and sensitive actor resolution explicitly bypasses cache. Account identity is derived from the session, never a body/query actor ID. Account linking/social login is disabled; no family relationship or profile grant is created by signup.
+
+The provider adapter owns the library, public route allowlist, verification/reset callbacks and session reader. Identity application services depend on contracts. The API composition root supplies the pool and local mail adapter; HTTP transport handles bounded bodies, socket-derived rate-limit identity, exact POST origin checks and response forwarding. JSON responses strip opaque session tokens, preserving HttpOnly cookie transport. Server/client cookie prefix is biovitai.
+
+Local password authentication requires email verification, has no automatic signup/verification login, and uses the library's password hash. Sessions expire after one day, refresh after one hour and remain revocable through the database. Fresh sign-ins issue distinct session tokens; logout-all and password reset revoke old sessions. Password reset identifiers are hashed, expiring and single use. Emails are written as private capture files under ignored .local/auth-mailbox, never sent externally or logged. This tests the verification flow; it does not establish real-world email ownership for a patient pilot.
+
+Identity SQL was generated from the pinned provider configuration and checked in as 0001_identity.sql. The explicit migration command serializes migrations with an advisory lock, applies each in a transaction, and records version/checksum. It rejects changed applied files; upgrade with a new migration instead. HTTP startup never implicitly mutates schema. Readiness now checks the identity tables in addition to being able to connect.
+
+Only loopback HTTP with synthetic data is enabled. HttpOnly/SameSite=Lax cookies are namespaced but Secure=false for local HTTP. Remote UAT requires an explicit HTTPS/cookie/origin/processor configuration, proper runtime DB privileges and an actual mail delivery adapter. MFA/passkeys, password breach screening, durable security audit, family permissions and consent records are subsequent work. No provider is being claimed as independently audited or production-cleared by this choice.
+
+References: [Better Auth password/email flow](https://better-auth.com/docs/authentication/email-password), [database sessions and revocation](https://better-auth.com/docs/concepts/session-management), [rate limiting](https://better-auth.com/docs/concepts/rate-limit), [database schema/migration support](https://better-auth.com/docs/concepts/database).

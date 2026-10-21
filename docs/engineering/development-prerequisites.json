@@ -1,0 +1,143 @@
+{
+  "schemaVersion": 1,
+  "accepted": [
+    {
+      "taskId": "BV-008",
+      "status": "In Review",
+      "evidence": "docs/engineering/IDENTITY-IMPLEMENTATION.md",
+      "scope": "Owner-authorized continuation to BV-009 after local identity HTTP/PostgreSQL validation. Formal completion is not claimed."
+    },
+    {
+      "taskId": "BV-009",
+      "status": "In Review",
+      "evidence": "docs/engineering/PROFILE-CONTEXT.md",
+      "scope": "Owner-authorized continuation to BV-013 following real PostgreSQL/HTTP authorization, consent, revocation and profile-context validation. Formal completion is not claimed."
+    },
+    {
+      "taskId": "BV-010",
+      "status": "In Review",
+      "evidence": "docs/engineering/HEALTH-SCHEMA.md",
+      "scope": "Owner-authorized continuation to BV-013 following canonical evidence, provenance, immutability, isolation and migration validation. Formal completion is not claimed."
+    },
+    {
+      "taskId": "BV-011",
+      "status": "In Review",
+      "evidence": "docs/engineering/STORAGE-JOBS.md",
+      "scope": "Owner-authorized continuation to BV-013 following private-object, download, outbox, lease/retry and revocation validation. Formal completion is not claimed."
+    },
+    {
+      "taskId": "BV-012",
+      "status": "In Review",
+      "evidence": "docs/engineering/P2-P5-IMPLEMENTATION.md",
+      "scope": "Owner-authorized P2-P5 engineering continuation using implemented contracts and synthetic validation only. Clinical rules remain disabled, reviewer appointment remains deferred, and native validation, hosted CI and formal/human signoff remain separate gates."
+    },
+    {
+      "taskId": "BV-013",
+      "status": "In Review",
+      "evidence": "docs/engineering/P2-P5-IMPLEMENTATION.md",
+      "scope": "Owner-authorized P2-P5 engineering continuation using implemented contracts and synthetic validation only. Clinical rules remain disabled, reviewer appointment remains deferred, and native validation, hosted CI and formal/human signoff remain separate gates."
+    },
+    {
+      "taskId": "BV-014",
+      "status": "In Review",
+      "evidence": "docs/engineering/P2-P5-IMPLEMENTATION.md",
+      "scope": "Owner-authorized P2-P5 engineering continuation using implemented contracts and synthetic validation only. Clinical rules remain disabled, reviewer appointment remains deferred, and native validation, hosted CI and formal/human signoff remain separate gates."
+    },
+    {
+      "taskId": "BV-015",
+      "status": "In Review",
+      "evidence": "docs/engineering/P2-P5-IMPLEMENTATION.md",
+      "scope": "Owner-authorized P2-P5 engineering continuation using implemented contracts and synthetic validation only. Clinical rules remain disabled, reviewer appointment remains deferred, and native validation, hosted CI and formal/human signoff remain separate gates."
+    },
+    {
+      "taskId": "BV-016",
+      "status": "In Review",
+      "evidence": "docs/engineering/P2-P5-IMPLEMENTATION.md",
+      "scope": "Owner-authorized P2-P5 engineering continuation using implemented contracts and synthetic validation only. Clinical rules remain disabled, reviewer appointment remains deferred, and native validation, hosted CI and formal/human signoff remain separate gates."
+    },
+    {
+      "taskId": "BV-017",
+      "status": "In Review",
+      "evidence": "docs/engineering/P2-P5-IMPLEMENTATION.md",
+      "scope": "Owner-authorized P2-P5 engineering continuation using implemented contracts and synthetic validation only. Clinical rules remain disabled, reviewer appointment remains deferred, and native validation, hosted CI and formal/human signoff remain separate gates."
+    },
+    {
+      "taskId": "BV-018",
+      "status": "In Review",
+      "evidence": "docs/engineering/P2-P5-IMPLEMENTATION.md",
+      "scope": "Owner-authorized P2-P5 engineering continuation using implemented contracts and synthetic validation only. Clinical rules remain disabled, reviewer appointment remains deferred, and native validation, hosted CI and formal/human signoff remain separate gates."
+    },
+    {
+      "taskId": "BV-019",
+      "status": "In Review",
+      "evidence": "docs/engineering/P2-P5-IMPLEMENTATION.md",
+      "scope": "Owner-authorized P2-P5 engineering continuation using implemented contracts and synthetic validation only. Clinical rules remain disabled, reviewer appointment remains deferred, and native validation, hosted CI and formal/human signoff remain separate gates."
+    },
+    {
+      "taskId": "BV-020",
+      "status": "In Review",
+      "evidence": "docs/engineering/P2-P5-IMPLEMENTATION.md",
+      "scope": "Owner-authorized P2-P5 engineering continuation using implemented contracts and synthetic validation only. Clinical rules remain disabled, reviewer appointment remains deferred, and native validation, hosted CI and formal/human signoff remain separate gates."
+    },
+    {
+      "taskId": "BV-021",
+      "status": "In Review",
+      "evidence": "docs/engineering/P2-P5-IMPLEMENTATION.md",
+      "scope": "Owner-authorized P2-P5 engineering continuation using implemented contracts and synthetic validation only. Clinical rules remain disabled, reviewer appointment remains deferred, and native validation, hosted CI and formal/human signoff remain separate gates."
+    },
+    {
+      "taskId": "BV-022",
+      "status": "In Review",
+      "evidence": "docs/engineering/P2-P5-IMPLEMENTATION.md",
+      "scope": "Owner-authorized P2-P5 engineering continuation using implemented contracts and synthetic validation only. Clinical rules remain disabled, reviewer appointment remains deferred, and native validation, hosted CI and formal/human signoff remain separate gates."
+    },
+    {
+      "taskId": "BV-023",
+      "status": "In Review",
+      "evidence": "docs/engineering/P2-P5-IMPLEMENTATION.md",
+      "scope": "Owner-authorized P2-P5 engineering continuation using implemented contracts and synthetic validation only. Clinical rules remain disabled, reviewer appointment remains deferred, and native validation, hosted CI and formal/human signoff remain separate gates."
+    },
+    {
+      "taskId": "BV-024",
+      "status": "In Review",
+      "evidence": "docs/engineering/P2-P5-IMPLEMENTATION.md",
+      "scope": "Owner-authorized P2-P5 engineering continuation using implemented contracts and synthetic validation only. Clinical rules remain disabled, reviewer appointment remains deferred, and native validation, hosted CI and formal/human signoff remain separate gates."
+    },
+    {
+      "taskId": "BV-025",
+      "status": "In Review",
+      "evidence": "docs/engineering/P2-P5-IMPLEMENTATION.md",
+      "scope": "Owner-authorized P2-P5 engineering continuation using implemented contracts and synthetic validation only. Clinical rules remain disabled, reviewer appointment remains deferred, and native validation, hosted CI and formal/human signoff remain separate gates."
+    },
+    {
+      "taskId": "BV-026",
+      "status": "In Review",
+      "evidence": "docs/engineering/P2-P5-IMPLEMENTATION.md",
+      "scope": "Owner-authorized P2-P5 engineering continuation using implemented contracts and synthetic validation only. Clinical rules remain disabled, reviewer appointment remains deferred, and native validation, hosted CI and formal/human signoff remain separate gates."
+    },
+    {
+      "taskId": "BV-027",
+      "status": "In Review",
+      "evidence": "docs/engineering/P2-P5-IMPLEMENTATION.md",
+      "scope": "Owner-authorized P2-P5 engineering continuation using implemented contracts and synthetic validation only. Clinical rules remain disabled, reviewer appointment remains deferred, and native validation, hosted CI and formal/human signoff remain separate gates."
+    },
+    {
+      "taskId": "BV-028",
+      "status": "In Review",
+      "evidence": "docs/engineering/P2-P5-IMPLEMENTATION.md",
+      "scope": "Owner-authorized P2-P5 engineering continuation using implemented contracts and synthetic validation only. Clinical rules remain disabled, reviewer appointment remains deferred, and native validation, hosted CI and formal/human signoff remain separate gates."
+    },
+    {
+      "taskId": "BV-029",
+      "status": "In Review",
+      "evidence": "docs/engineering/P2-P5-IMPLEMENTATION.md",
+      "scope": "Owner-authorized P2-P5 engineering continuation using implemented contracts and synthetic validation only. Clinical rules remain disabled, reviewer appointment remains deferred, and native validation, hosted CI and formal/human signoff remain separate gates."
+    },
+    {
+      "taskId": "BV-031",
+      "status": "In Review",
+      "evidence": "docs/engineering/P2-P5-IMPLEMENTATION.md",
+      "scope": "Owner-authorized P2-P5 engineering continuation using implemented contracts and synthetic validation only. Clinical rules remain disabled, reviewer appointment remains deferred, and native validation, hosted CI and formal/human signoff remain separate gates."
+    }
+  ]
+}

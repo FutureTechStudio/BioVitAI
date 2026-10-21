@@ -1,0 +1,11 @@
+﻿ID,Decision,Owner Role,Due Gate,Status,Notes
+DEC-001,Launch jurisdiction and health-data hosting region,Product + Legal,P0,Open,Do not assume regulatory approval
+DEC-002,Frontend/mobile stack and deployment platform,Tech Lead,P0,Open,Favor typed contracts and monorepo
+DEC-003,OCR vendor and supported lab templates,AI Lead + Clinical,P2,Open,Measure on representative reports
+DEC-004,Named clinical/lab rule reviewer,Product,P0,Open,Independent review before pilot
+DEC-005,AI model provider and fallback,AI Lead + Security,P4,Open,Residency and safety eval
+DEC-006,English/Arabic and additional languages,Product + UX,P0,Open,RTL tests mandatory
+DEC-007,Wearables and authorization vendors,Integrations,P6,Open,Manual input first
+DEC-008,Community posting launch policy,Trust & Safety,P7,Open,Posting feature flagged off
+DEC-009,Minors / family guardianship,Legal + Privacy,P1,Open,No minors until approved
+DEC-010,3/6/12 month wellness cohort design,Product Analytics,P6,Open,Not an early pilot success claim

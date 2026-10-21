@@ -1,0 +1,26 @@
+name: biovitai-local
+services:
+  postgres:
+    image: postgres:17.10-bookworm
+    environment:
+      POSTGRES_USER: biovitai_dev
+      POSTGRES_DB: biovitai_dev
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
+    secrets:
+      - postgres_password
+    ports:
+      - '127.0.0.1:54329:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U biovitai_dev -d biovitai_dev']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+secrets:
+  postgres_password:
+    file: ./.local/postgres-password
+volumes:
+  postgres_data:

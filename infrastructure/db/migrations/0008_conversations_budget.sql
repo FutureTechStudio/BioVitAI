@@ -1,0 +1,16 @@
+CREATE TABLE ai_daily_budget(day date PRIMARY KEY, committed_microusd bigint NOT NULL DEFAULT 0 CHECK(committed_microusd>=0 AND committed_microusd<=5000000));
+CREATE TABLE ai_cost_reservations(id uuid PRIMARY KEY,day date NOT NULL REFERENCES ai_daily_budget(day),reserved_microusd bigint NOT NULL CHECK(reserved_microusd>0),actual_microusd bigint CHECK(actual_microusd>=0 AND actual_microusd<=reserved_microusd),state text NOT NULL DEFAULT 'reserved' CHECK(state IN ('reserved','settled')),created_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE ai_conversations(id uuid PRIMARY KEY,profile_id uuid NOT NULL REFERENCES identity_profile(id),created_by uuid NOT NULL REFERENCES identity_user(id),created_at timestamptz NOT NULL DEFAULT now(),UNIQUE(profile_id,id));
+CREATE TABLE ai_messages(id uuid PRIMARY KEY,profile_id uuid NOT NULL,conversation_id uuid NOT NULL,request_key uuid NOT NULL,ciphertext bytea NOT NULL,evidence_revision text NOT NULL,created_at timestamptz NOT NULL DEFAULT now(),UNIQUE(profile_id,request_key),FOREIGN KEY(profile_id,conversation_id) REFERENCES ai_conversations(profile_id,id));
+ALTER TABLE ai_conversations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE ai_conversations FORCE ROW LEVEL SECURITY;
+ALTER TABLE ai_messages ENABLE ROW LEVEL SECURITY;
+ALTER TABLE ai_messages FORCE ROW LEVEL SECURITY;
+CREATE POLICY ai_conversations_profile ON ai_conversations USING(profile_id=nullif(current_setting('biovitai.profile_id',true),'')::uuid) WITH CHECK(profile_id=nullif(current_setting('biovitai.profile_id',true),'')::uuid);
+CREATE POLICY ai_messages_profile ON ai_messages USING(profile_id=nullif(current_setting('biovitai.profile_id',true),'')::uuid) WITH CHECK(profile_id=nullif(current_setting('biovitai.profile_id',true),'')::uuid);
+CREATE TRIGGER ai_message_immutable BEFORE UPDATE OR DELETE ON ai_messages FOR EACH ROW EXECUTE FUNCTION health_reject_mutation();
+CREATE TRIGGER ai_message_no_truncate BEFORE TRUNCATE ON ai_messages FOR EACH STATEMENT EXECUTE FUNCTION health_reject_mutation();
+CREATE TABLE ai_request_claims(profile_id uuid NOT NULL REFERENCES identity_profile(id),request_key uuid NOT NULL,fingerprint text NOT NULL,created_at timestamptz NOT NULL DEFAULT now(),PRIMARY KEY(profile_id,request_key));
+ALTER TABLE ai_request_claims ENABLE ROW LEVEL SECURITY;
+ALTER TABLE ai_request_claims FORCE ROW LEVEL SECURITY;
+CREATE POLICY ai_claim_profile ON ai_request_claims USING(profile_id=nullif(current_setting('biovitai.profile_id',true),'')::uuid) WITH CHECK(profile_id=nullif(current_setting('biovitai.profile_id',true),'')::uuid);

@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "entries": [
+    {
+      "date": "2026-10-20",
+      "taskIds": [
+        "BV-008"
+      ],
+      "evidence": "docs/engineering/IDENTITY-IMPLEMENTATION.md",
+      "scope": "Local identity API, PostgreSQL migrations and synthetic email capture",
+      "validation": "Node 22.23.3: 21 baseline tests and 9 PostgreSQL/HTTP integration checks pass; live readiness 200, unauthenticated actor endpoint 401; audit reports zero vulnerabilities",
+      "limitations": [
+        "No external mail delivery",
+        "No authentication UI yet",
+        "No family/profile grants or AI consent records yet",
+        "Hosted CI and remote UAT not executed"
+      ],
+      "status": "In Review"
+    },
+    {
+      "date": "2026-10-20",
+      "taskIds": [
+        "BV-009"
+      ],
+      "evidence": "docs/engineering/PROFILE-IMPLEMENTATION.md",
+      "scope": "Local profile policy, family invitations/grants, purpose-specific consent and metadata audit",
+      "validation": "Node 22: 21 baseline tests and 16 PostgreSQL/HTTP tests pass, including 6 profile subtests; concurrent single-use acceptance, lock ordering, expiry, consent withdrawal and same-session revocation tested. Live readiness 200 and unauthenticated profile endpoint 401 after migration.",
+      "limitations": [
+        "Self-owned profiles only; no dependant/guardian implementation",
+        "Local capture delivery only; durable outbox deferred",
+        "No profile or consent UI yet",
+        "Future worker/cache/source pipelines must adopt policy and receive end-to-end revocation tests",
+        "Denied-access audit and privileged/tamper-resistant database audit retention deferred"
+      ],
+      "status": "In Review"
+    },
+    {
+      "date": "2026-10-20",
+      "taskIds": [
+        "BV-009"
+      ],
+      "evidence": "docs/engineering/PROFILE-CONTEXT.md",
+      "scope": "Owner amendment: email-less managed family profiles, optional contact, later invitation access and per-session active profile context",
+      "validation": "Node 22: 25 baseline/client tests and 22 real PostgreSQL/HTTP tests pass. Upgrade preserves legacy profile/consent/audit. Context revisions, same-session concurrency, cross-session isolation, scope/AI denial, revocation, logout and stale client rendering tested. Local migration applied; readiness 200 and unauthenticated context 401.",
+      "limitations": [
+        "Visible profile picker and clinical screens not built yet",
+        "Future app endpoints must use withActiveAccess and actual UI providers must wire the tested client reset/publish guard",
+        "No subject-identity claim, automatic profile merge, management transfer or minor/guardian policy",
+        "External delivery, clinical data pipelines and production configuration remain future work"
+      ],
+      "status": "In Review"
+    },
+    {
+      "date": "2026-10-20",
+      "taskIds": [
+        "BV-010"
+      ],
+      "evidence": "docs/engineering/HEALTH-SCHEMA.md",
+      "scope": "Canonical profile-bound immutable health evidence schema, typed source contracts, effective verification and derived lineage",
+      "validation": "Node 22: 31 baseline/contract/client tests and 33 real PostgreSQL/HTTP tests pass. Health tests cover upgrade/idempotence, comparator/decimal/date/source fidelity, cross-profile/report/page FKs, identity-bound verification, immutable corrections, sealed lineage, concurrent correction/publication and non-bypass RLS/invoker views. Live migration applied; readiness 200; unauthenticated context 401.",
+      "limitations": [
+        "Schema/contracts only; no health ingestion repository or HTTP verification endpoint yet",
+        "Private durable object storage, signed links, scanning and async outbox/jobs are BV-011/P2 work",
+        "No clinical rules seeded or calculations implemented; full comparability/rule evaluation and lifecycle remain later work",
+        "Local synthetic database owner bypasses RLS; production roles/configuration, retention/deletion and stored cache invalidation integrations remain future work"
+      ],
+      "status": "In Review"
+    },
+    {
+      "date": "2026-10-20",
+      "taskIds": [
+        "BV-011"
+      ],
+      "evidence": "docs/engineering/STORAGE-JOBS.md",
+      "scope": "Local encrypted private-object provider, authenticated signed HTTP downloads, durable outbox/leased jobs and transactional receipt handler",
+      "validation": "Node 22: 34 baseline/contract/client tests and 46 real PostgreSQL/HTTP tests pass. Storage suite covers encryption/tampering, context/session access and revocation, registration idempotency, file/DB/audit rollback, concurrent nested transactions, outbox/worker replay, leased retry/fencing, account verification and profile/actor FKs/RLS. Live readiness 200 and unauthenticated storage links 401 after migration; jobs:once reports idle.",
+      "limitations": [
+        "Synthetic fixture objects only; no upload endpoint, malware scanning, MIME verification, OCR or report verification handler",
+        "Local encryption derives from stable auth secret; production keyring/KMS, storage provider and runtime/dispatcher roles remain configuration work",
+        "File/DB crash reconciliation and backup/retention/deletion operations are not implemented",
+        "One-shot worker command only; long-running scheduling, heartbeat and external effect idempotency remain future work",
+        "App shell and visible profile picker are BV-012"
+      ],
+      "status": "In Review"
+    },
+    {
+      "date": "2026-10-20",
+      "taskIds": [
+        "BV-012"
+      ],
+      "evidence": "docs/engineering/WEB-SHELL.md",
+      "scope": "Local Next.js/React web shell, auth callbacks and visible managed-family context switching",
+      "validation": "Node 22: 36 core/contract/client checks and 46 PostgreSQL/HTTP checks pass; optimized web build, lint/typecheck and audit pass. Chromium lifecycle acceptance covers real captured verification/reset, family profiles without emails, delayed-switch immediate clearing, assistant reset, contact update, all tabs, saved selection, mobile overflow, logout and fresh-session reset. Community disabled build validated while Health/Wellness continue to work. Desktop/mobile screenshots inspected.",
+      "limitations": [
+        "Synthetic loopback development only; no remote UAT or production deployment",
+        "No report upload, clinical results, wellness tracking, live AI or Community feed service",
+        "Invitation acceptance/sharing-management screens and React Native remain future work",
+        "Formal accessibility audit, Firefox/Safari/device coverage, hosted CI and formal reviews not claimed"
+      ],
+      "status": "In Review"
+    },
+    {
+      "date": "2026-10-21",
+      "taskIds": [
+        "BV-013"
+      ],
+      "evidence": "docs/engineering/CONTRACT-PERMISSION-GATE.md",
+      "scope": "Strict response contracts, negative permission matrix and isolated optimized-browser regression/CI gate",
+      "validation": "Node 22: 39 core/contract/client tests and 48 real PostgreSQL/HTTP tests pass. Two Chromium tests pass with Community enabled and again disabled: full identity/family lifecycle, separate cookie-store account isolation, unauthorized/missing-ID equivalence, denied contact mutation, forged URL context and rejected-switch empty view. Temporary database, mailbox, object directory and separate web builds are cleaned up; default preview remains available. Windows/Linux CI matrix configured; source/tracker preservation validators pass.",
+      "limitations": [
+        "Hosted CI execution and repository branch protection are not verified locally",
+        "Formal specialist/PR acceptance remains separate; all platform tasks retain In Review",
+        "Firefox/Safari, real devices and formal accessibility audit remain future validation",
+        "Upload/scanning/OCR and subsequent AI/wellness/community services require additional permission and contract fixtures"
+      ],
+      "status": "In Review"
+    }
+  ]
+}

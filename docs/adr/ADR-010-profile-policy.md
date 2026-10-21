@@ -1,0 +1,13 @@
+# ADR-010: Transactional profile permissions and consent
+
+Status: Implemented for local synthetic development; BV-009 In Review. Date: 20 October 2026. Requirements: 04, 18, 36, 47, 52.
+
+Keep self-owned profiles separate from login accounts. Use explicit grants containing profile/account, action/category/purpose triples, expiry and revocation. Role labels supply no authority. Invitations remain pending until the intended verified account accepts; store only a hash of each single-use token. Owners record family-sharing consent separately from invitation acceptance and from AI-processing consent.
+
+Use PostgreSQL as the current authority with no permission cache. Serialize protected operations and consent/grant mutations on the profile row. The public policy contract wraps each operation and retains the lock through its callback and access audit. This gives revocation a commit boundary: earlier operations finish before it commits, and subsequent operations re-read the new state. This conservative design suits a local modular monolith; it sacrifices per-profile read concurrency for clear revocation behavior. Long-running provider/network work must not be inserted into this callback without a separately designed cancellation/recheck protocol.
+
+Withdrawals append consent history. Family-sharing withdrawal also revokes existing grants and pending invitations in the same transaction; a later grant of consent cannot reactivate old permissions. AI/health-to-wellness checks remain separate. Successful access and security changes create metadata-only audit events. No clinical payloads enter audit rows.
+
+The migration adds profile, consent, invitation, grant and audit tables without changing the applied identity migration. Local capture files exercise invitation delivery; durable delivery, denied-access audit, tamper-resistant retention, dedicated database roles and future worker/cache/source pipelines remain recorded follow-up work. No dependant/guardian profiles or clinical processing are introduced by this decision.
+
+Owner amendment: managed family records without email and later optional contact/invitation access are now supported through additive migration 0003. Existing self-profile IDs, consent and audit survive the upgrade. The active app context is persisted per login session with optimistic revisions and rechecked through `withActiveAccess`; the signed-in account never changes. A reusable client guard clears views and blocks delayed responses across switches. This extends the original self-only slice without introducing legal guardian workflows. See [profile-context implementation and UI integration](../engineering/PROFILE-CONTEXT.md).

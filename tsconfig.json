@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+    "verbatimModuleSyntax": true,
+    "declaration": true,
+    "rootDir": ".",
+    "outDir": "dist",
+    "skipLibCheck": true
+  },
+  "exclude": ["apps/web", "apps/mobile"],
+  "include": [
+    "shared/**/*.ts",
+    "modules/**/*.ts",
+    "infrastructure/**/*.ts",
+    "apps/**/*.ts"
+  ]
+}

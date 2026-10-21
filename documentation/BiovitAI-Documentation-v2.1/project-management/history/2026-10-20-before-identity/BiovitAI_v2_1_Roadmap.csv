@@ -1,0 +1,10 @@
+﻿Phase,Name,Start Week,End Week,Duration Weeks,Scope,Task Count,P0 Count,Gate,Status
+P0,Foundation,1,2,2,"Architecture, clinical governance, privacy & dev tooling",7,7,P0,Blocked
+P1,Platform & Identity,3,5,3,"Profile auth, authorization, canonical data",6,6,P1,Not Started
+P2,Medical Reports,6,9,4,"Upload, OCR, verification & raw observation",5,5,P2,Not Started
+P3,Health Intelligence,10,13,4,"Safe aggregation, trends, body view",5,4,P3,Not Started
+P4,AI Platform,14,17,4,"AI Gateway, tools, chat",5,4,P4,Not Started
+P5,Private Pilot,18,20,3,"Privacy/clinical pilot, instrumentation",4,4,P5,Not Started
+P6,Adaptive Wellness,21,24,4,"Reviewed actions, plan, recovery, device data",9,6,P6,Not Started
+P7,Community Beta,25,28,4,Curated feed; moderated posting optional,5,1,P7,Not Started
+P8,Production Readiness,29,31,3,"Security, legal, operations, rollout",5,5,P8,Not Started

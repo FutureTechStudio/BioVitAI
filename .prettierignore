@@ -1,0 +1,13 @@
+documentation/
+node_modules/
+dist/
+package-lock.json
+.local/
+apps/web/.next
+playwright-report/
+test-results/
+apps/web/next-env.d.ts
+apps/mobile/android/
+apps/mobile/ios/
+apps/mobile/.expo/
+apps/mobile/dist/

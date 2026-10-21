@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "entries": [
+    {
+      "date": "2026-10-20",
+      "taskIds": ["BV-008"],
+      "evidence": "docs/engineering/IDENTITY-IMPLEMENTATION.md",
+      "scope": "Local identity API, PostgreSQL migrations and synthetic email capture",
+      "validation": "Node 22.23.3: 21 baseline tests and 9 PostgreSQL/HTTP integration checks pass; live readiness 200, unauthenticated actor endpoint 401; audit reports zero vulnerabilities",
+      "limitations": ["No external mail delivery", "No authentication UI yet", "No family/profile grants or AI consent records yet", "Hosted CI and remote UAT not executed"],
+      "status": "In Review"
+    },
+    {
+      "date": "2026-10-20",
+      "taskIds": ["BV-009"],
+      "evidence": "docs/engineering/PROFILE-IMPLEMENTATION.md",
+      "scope": "Local profile policy, family invitations/grants, purpose-specific consent and metadata audit",
+      "validation": "Node 22: 21 baseline tests and 16 PostgreSQL/HTTP tests pass, including 6 profile subtests; concurrent single-use acceptance, lock ordering, expiry, consent withdrawal and same-session revocation tested. Live readiness 200 and unauthenticated profile endpoint 401 after migration.",
+      "limitations": ["Self-owned profiles only; no dependant/guardian implementation", "Local capture delivery only; durable outbox deferred", "No profile or consent UI yet", "Future worker/cache/source pipelines must adopt policy and receive end-to-end revocation tests", "Denied-access audit and privileged/tamper-resistant database audit retention deferred"],
+      "status": "In Review"
+    }
+  ]
+}

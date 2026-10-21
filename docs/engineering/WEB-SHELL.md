@@ -1,0 +1,31 @@
+# BV-012: local web shell
+
+The Next.js App Router web app in `apps/web` provides responsive, keyboard-accessible My Health, My Wellness and read-only Community & Trends routes. A visible profile picker keeps the selected subject separate from the signed-in manager. Family profiles can be created without email; managers can add or remove a contact email later. Contact metadata never grants login or sharing access.
+
+## Run
+
+Use the generated local defaults (`127.0.0.1`, API 3001, web 3000). Start `npm run dev:local`, apply `npm run db:migrate` when needed, then run `npm run dev:web` in another terminal. Open <http://127.0.0.1:3000>. For an optimized local preview, stop the web process, run `npm run build:web`, then `npm run start:web`. Building the web bundle does not enable a production backend: the API still rejects production/remote/patient-data configuration.
+
+`/auth` supports sign-in, signup, verification resend, forgotten-password requests and password-reset callbacks. Verification and reset messages remain private local captures in `.local/auth-mailbox`; inspect the appropriate synthetic recipient's JSON locally and follow its `url`. There is no public mailbox endpoint or external delivery. Reset tokens are removed from the address bar after the callback is read; they remain only in component memory until submitted or the page closes. The web shell stores no session or profile data in localStorage.
+
+## Transport and profile boundary
+
+Next rewrites only `/api/auth/*` and `/v1/*` to a fixed loopback upstream; the client cannot choose another host. Browser networking lives in `apps/web/src/api.ts`, accepting only relative allowlisted API paths with same-origin cookies and no-store requests. The API accepts its own exact origin plus the configured loopback web origin; absent, malformed and forged origins fail closed. Forwarding headers do not establish identity or CSRF trust. Public response schemas validate the account, list and selected context without importing server implementations. No account credentials or server configuration enter the bundle.
+
+`createProfileView` owns selection generations, cancellation and publication guards. Starting a selection or resync clears the selected profile, unmounts private forms, and closes the assistant before loading a replacement. The picker stays disabled during selection. Failed selection leaves an empty view with an explicit refresh action. Tab hiding clears the private view; focus, visibility restoration and page restoration reload authorization and context. Tab routes load the session context afresh. Contact writes capture the selected profile/revision and use the cancellation/publication guard. Server permission checks remain authoritative; future clinical endpoints must also require the active revision and bind responses through the guard. No clinical data cache exists yet.
+
+The assistant panel names the current person and describes its unavailable state; it sends no provider request. Report upload, clinical interpretation, wellness tracking and published Community content are not implemented in this slice. Their screens display empty/unavailable states. Invitation acceptance/sharing management screens and React Native remain later work; existing invitation APIs are preserved.
+
+## Feature control and validation
+
+Set `COMMUNITY_ENABLED=false` **before building** the web app (or starting the dev server) to show a paused Community screen. Health and wellness routes continue to work. This is a server deployment flag compiled into the shell, not a user-controlled permission.
+
+`npm run check` includes web TypeScript checking and architecture guards. `npm run build:web` verifies all routes as an optimized build. With the default local API and web running, install Chromium once with `npx playwright install chromium`, then run `npm run test:web`. The browser acceptance test creates uniquely named synthetic accounts/family profiles in the local development database and privately follows captured messages; it does not delete existing data. Do not run it against a nonlocal environment. Traces/video are disabled to avoid recording reset links. Screenshots under ignored `.local` contain synthetic data only.
+
+For repeatable regression testing, prefer `npm run test:web:isolated` and `npm run test:web:community-off`. The [BV-013 gate](CONTRACT-PERMISSION-GATE.md) creates and cleans up a separate database, mailbox, API and optimized web build for each run. It also exercises cross-account browser isolation and rejected-selection clearing. CI uses these isolated commands.
+
+The browser flow covers signup, verification, signin, two email-less family members, selection and assistant reset, contact update, all three routes, session-persistent selection, mobile overflow, signout, password recovery and fresh-session selection reset. Existing PostgreSQL suites cover authorization/revocation and stale-revision races; client guard tests cover delayed rendering. Keyboard affordances, labels, skip navigation, English document language and responsive layout are implemented; formal accessibility certification, Safari/Firefox/device validation and hosted CI execution are not claimed.
+
+Validated on 20 October 2026: 36 core/contract/client tests and 46 real PostgreSQL/HTTP tests pass on Node 22. Chromium acceptance passes against the optimized web app, including an intentionally delayed switch that must remove the previous assistant and show an empty loading view before the server responds. The same lifecycle passes with Community disabled, and desktop/mobile screenshots were inspected. The optimized web build, lint, type checks, package/tracker preservation validators and dependency audit pass. BV-012 is In Review; formal review/PR completion is not claimed.
+
+References: [Next installation](https://nextjs.org/docs/app/getting-started/installation), [Next rewrites](https://nextjs.org/docs/app/api-reference/config/next-config-js/rewrites), [React releases](https://react.dev/versions), [Playwright browsers](https://playwright.dev/docs/browsers). Versions are pinned in the lockfile. Webpack resolves shared NodeNext sources' emitted `.js` specifiers to their TypeScript source for the browser build.

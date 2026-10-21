@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "developmentAcceptance": {
+    "evidence": "docs/p0/DEVELOPMENT-ACCEPTANCE.md",
+    "taskIds": ["BV-001", "BV-002", "BV-003", "BV-005", "BV-006", "BV-007"]
+  },
+  "developmentDeferrals": {
+    "evidence": "docs/p0/REVIEW-DEFERRAL.md",
+    "approvalIds": [
+      "dataHandling",
+      "clinicalReviewer",
+      "gateway",
+      "launchScope"
+    ],
+    "taskIds": ["BV-004"]
+  },
+  "approvals": [
+    {
+      "id": "navigation",
+      "taskId": "BV-001",
+      "requiredRole": "Product/UX",
+      "status": "Approved",
+      "reviewer": "Project owner (chat confirmation)",
+      "reviewedAt": "2026-10-20T12:08:13Z",
+      "artifactVersion": "owner-decisions-2026-10-20",
+      "evidence": "docs/p0/OWNER-DECISIONS.md"
+    },
+    {
+      "id": "architecture",
+      "taskId": "BV-002",
+      "requiredRole": "Tech Lead",
+      "status": "Approved",
+      "reviewer": "Project owner (chat confirmation)",
+      "reviewedAt": "2026-10-20T12:08:13Z",
+      "artifactVersion": "owner-decisions-2026-10-20",
+      "evidence": "docs/p0/OWNER-DECISIONS.md"
+    },
+    {
+      "id": "dataHandling",
+      "taskId": "BV-003",
+      "requiredRole": "Security/Privacy",
+      "status": "Pending",
+      "reviewer": null,
+      "reviewedAt": null,
+      "artifactVersion": null,
+      "evidence": null
+    },
+    {
+      "id": "clinicalReviewer",
+      "taskId": "BV-004",
+      "requiredRole": "Product/Clinical",
+      "status": "Pending",
+      "reviewer": null,
+      "reviewedAt": null,
+      "artifactVersion": null,
+      "evidence": null
+    },
+    {
+      "id": "gateway",
+      "taskId": "BV-006",
+      "requiredRole": "AI Lead/Security",
+      "status": "Pending",
+      "reviewer": null,
+      "reviewedAt": null,
+      "artifactVersion": null,
+      "evidence": null
+    },
+    {
+      "id": "launchScope",
+      "taskId": "BV-007",
+      "requiredRole": "Product/Legal",
+      "status": "Pending",
+      "reviewer": null,
+      "reviewedAt": null,
+      "artifactVersion": null,
+      "evidence": null
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+﻿ID,Decision,Owner Role,Due Gate,Status,Notes
+DEC-001,Launch jurisdiction and health-data hosting region,Product + Legal,P0,Open,"Owner confirmed UAE and India target markets; local PostgreSQL only for now. Production region, transfers and applicable obligations remain unresolved; specialist review deferred for development."
+DEC-002,Frontend/mobile stack and deployment platform,Tech Lead,P0,Open,"Owner accepted TypeScript monorepo, Next.js, React Native, PostgreSQL and modular monolith. Production deployment platform remains unresolved; see docs/p0/OWNER-DECISIONS.md."
+DEC-003,OCR vendor and supported lab templates,AI Lead + Clinical,P2,Open,Measure on representative reports
+DEC-004,Named clinical/lab rule reviewer,Product,P0,Open,Owner deferred reviewer appointment to Backlog for pilot/UAT development; BV-004. No clinician appointed or approval claimed.
+DEC-005,AI model provider and fallback,AI Lead + Security,P4,Open,Residency and safety eval
+DEC-006,English/Arabic and additional languages,Product + UX,P0,Decided,Owner selected English initially. Preserve localization readiness; Arabic has no committed release date.
+DEC-007,Wearables and authorization vendors,Integrations,P6,Open,Manual input first
+DEC-008,Community posting launch policy,Trust & Safety,P7,Open,Posting feature flagged off
+DEC-009,Minors / family guardianship,Legal + Privacy,P1,Open,No minors until approved
+DEC-010,3/6/12 month wellness cohort design,Product Analytics,P6,Open,Not an early pilot success claim
