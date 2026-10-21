@@ -14,6 +14,8 @@ The owner has [deferred specialist reviewer signoffs](docs/p0/REVIEW-DEFERRAL.md
 
 The authoritative baseline is [documentation v2.1](documentation/BiovitAI-Documentation-v2.1/README.md). Its original requirements and archives are preserved.
 
+The current web presentation and executed checks are recorded in the [BioFlow refinement record](documentation/design-system/BIOFLOW-REFINEMENTS-2026-10-22.md), including avatar profile controls, the floating session-aware assistant and distinct tab layouts.
+
 ## Local checks
 
 Use Node 22 LTS and npm. Local checks have passed on Node 22 and Node 25; CI is configured for Windows and Linux. Run:

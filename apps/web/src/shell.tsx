@@ -16,7 +16,10 @@ import type {
 import { createProfileView } from '../../../shared/profile-context/src/index';
 import { api, ApiError, friendlyError } from './api';
 import { ReportCenter } from './report-center';
-import { HealthChat } from './health-chat';
+import { AssistantWindow } from './assistant-window';
+import { ProfileMenu } from './profile-menu';
+import { sessionConversation, clearConversationSession } from './chat-session';
+import { HealthHome, WellnessPage, CommunityPage } from './workspace-pages';
 import { HealthDashboard } from './health-dashboard';
 import {
   BioFlowBackground,
@@ -56,6 +59,9 @@ export function Shell({
   const [error, setError] = useState('');
   const [managerOpen, setManagerOpen] = useState(false);
   const [assistantOpen, setAssistantOpen] = useState(false);
+  const [profilePanel, setProfilePanel] = useState('');
+  const [sessionScope, setSessionScope] = useState('');
+  const [chatId, setChatId] = useState('');
   const [utility, setUtility] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
   const [search, setSearch] = useState('');
@@ -65,6 +71,8 @@ export function Shell({
       setContext({ profile: null, revision: 0 });
       setManagerOpen(false);
       setAssistantOpen(false);
+      setProfilePanel('');
+      setChatId('');
       setUtility('');
       setSearch('');
       setDraftSearch('');
@@ -77,6 +85,9 @@ export function Shell({
     setError('');
     try {
       const me = CurrentAccountSchema.parse(await api('/v1/me'));
+      const auth = z
+        .object({ session: z.object({ id: z.string().min(1) }) })
+        .parse(await api('/api/auth/get-session'));
       const list = ProfileListSchema.parse(await api('/v1/profiles'));
       const selected = ProfileContextSchema.parse(
         await api('/v1/profile-context'),
@@ -90,6 +101,7 @@ export function Shell({
         )
       ) {
         setAccount(me.actor);
+        setSessionScope(`${me.actor.id}:${auth.session.id}`);
         setProfiles(list.profiles);
         setContext(selected);
         setBusy(false);
@@ -154,6 +166,7 @@ export function Shell({
     }
   }
   async function signOut() {
+    clearConversationSession(sessionScope);
     guard.clear();
     setBusy(true);
     setAccount(null);
@@ -167,13 +180,18 @@ export function Shell({
     }
   }
   const profile = context.profile;
+  function openAssistant() {
+    if (!profile || !sessionScope) return;
+    setChatId(sessionConversation(sessionScope, profile.id));
+    setAssistantOpen(true);
+  }
   const nav = (
     <nav aria-label="Main navigation">
       {navigation.map((item) => (
         <Link
           key={item.id}
           href={`/${item.id}`}
-          className={`nav-item ${tab === item.id ? 'active' : ''}`}
+          className={`nav-item nav-${item.id} ${tab === item.id ? 'active' : ''}`}
           aria-current={tab === item.id ? 'page' : undefined}
           onClick={() => {
             setMenuOpen(false);
@@ -233,22 +251,9 @@ export function Shell({
             Help & Support
           </button>
         </div>
-        <div className="assistant-card">
-          <span className="orb">
-            <Icon name="spark" size={28} />
-          </span>
-          <strong>Your AI health partner</strong>
-          <p>Explore verified evidence, explanations and sources.</p>
-          <button
-            data-drawer-trigger
-            className="primary"
-            disabled={!profile || busy}
-            onClick={() => setAssistantOpen(true)}
-            aria-expanded={assistantOpen}
-          >
-            <Icon name="spark" />
-            Health assistant
-          </button>
+        <div className="sidebar-footnote">
+          <span className="status-dot" />
+          Your health, connected.<small>A private space for your family.</small>
         </div>
       </aside>
       <div className="workspace">
@@ -301,43 +306,41 @@ export function Shell({
             >
               <Icon name="bell" />
             </button>
-            <label className="profile-picker">
-              <span>Viewing profile</span>
-              <select
-                aria-label="Viewing profile"
-                value={profile?.id ?? ''}
-                disabled={busy || !account}
-                onChange={(e) => void select(e.target.value)}
-              >
-                <option value="" disabled>
-                  {busy ? 'Loading…' : 'Select a profile'}
-                </option>
-                {profiles.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.displayName} · {p.kind === 'self' ? 'Me' : 'Family'}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <ProfileMenu
+              key={`${profile?.id ?? 'none'}:${context.revision}`}
+              name={profile?.displayName ?? 'Choose who you’re caring for'}
+              disabled={busy || !account}
+              onChoose={(action) => {
+                if (action === 'Manage Profiles') setManagerOpen(true);
+                else setProfilePanel(action);
+              }}
+            />
           </div>
         </header>
-        <main id="main" className="main-content">
+        <main id="main" className={`main-content page-${tab}`}>
           <div className="pilot-banner">
             <span className="status-dot" />
             Local pilot · Synthetic data only<span>BiovitAI BioFlow</span>
           </div>
-          {tab !== 'dashboard' && (
-            <div className="page-heading">
+          {['reports', 'insights'].includes(tab) && (
+            <div className={`page-heading page-hero hero-${tab}`}>
               <div>
-                <p className="eyebrow">Your health, connected</p>
+                <p className="eyebrow">
+                  {tab === 'reports'
+                    ? 'Your personal health library'
+                    : 'Patterns with provenance'}
+                </p>
                 <h1>{navigation.find((n) => n.id === tab)?.title}</h1>
                 <p>
-                  {tab === 'wellness'
-                    ? 'Make room for feeling well.'
-                    : tab === 'community'
-                      ? 'A wider perspective.'
-                      : 'Evidence you can explore, with sources you can inspect.'}
+                  {tab === 'reports'
+                    ? 'Every report, a clearer chapter. Upload, verify and keep the original close.'
+                    : 'Connect the dots over time. Explore verified results and the evidence behind them.'}
                 </p>
+              </div>
+              <div className="hero-art" aria-hidden="true">
+                <Icon name={tab} size={76} />
+                <span />
+                <span />
               </div>
             </div>
           )}
@@ -351,29 +354,6 @@ export function Shell({
             <LoadingSkeleton />
           ) : (
             <>
-              <section className="context-strip" aria-label="Current profile">
-                <div className="avatar">
-                  {profile?.displayName.charAt(0).toUpperCase() ?? '+'}
-                </div>
-                <div>
-                  <strong>
-                    {profile?.displayName ?? 'Choose who you’re caring for'}
-                  </strong>
-                  <p>
-                    {profile
-                      ? `${profile.kind === 'self' ? 'Your profile' : 'Family profile'} · All private views use this selection`
-                      : 'Create your profile or a family member. Family email is optional.'}
-                  </p>
-                </div>
-                <button
-                  data-drawer-trigger
-                  className="quiet"
-                  disabled={!account}
-                  onClick={() => setManagerOpen(true)}
-                >
-                  Manage profiles
-                </button>
-              </section>
               {!profile ? (
                 <section className="card empty">
                   <EmptyState title="Every health story starts somewhere.">
@@ -414,16 +394,7 @@ export function Shell({
           >
             Settings & profiles
           </button>
-          <button
-            data-drawer-trigger
-            disabled={!profile || busy}
-            onClick={() => {
-              setMenuOpen(false);
-              setAssistantOpen(true);
-            }}
-          >
-            Health assistant
-          </button>
+
           <button
             data-drawer-trigger
             onClick={() => {
@@ -458,6 +429,10 @@ export function Shell({
               await refresh();
               setManagerOpen(true);
             }}
+            onSelect={async (id) => {
+              await select(id);
+              setManagerOpen(true);
+            }}
           />
           <p className="muted">
             AI processing consent is managed inside the Health assistant for the
@@ -472,21 +447,107 @@ export function Shell({
           </button>
         </SideDrawer>
       )}
-      {assistantOpen && profile && (
-        <SideDrawer
-          title={`Here for ${profile.displayName}`}
+      <button
+        data-drawer-trigger
+        className="assistant-fab"
+        aria-label="Health assistant"
+        aria-expanded={assistantOpen}
+        disabled={!profile || busy || !sessionScope}
+        onClick={openAssistant}
+      >
+        <Icon name="spark" size={27} />
+        <span>Ask BiovitAI</span>
+      </button>
+      {assistantOpen && profile && chatId && (
+        <AssistantWindow
+          profile={profile}
+          guard={guard}
+          conversationId={chatId}
+          onConversation={(id) =>
+            setChatId(sessionConversation(sessionScope, profile.id, id))
+          }
           onClose={() => setAssistantOpen(false)}
-        >
-          <section className="assistant-panel" aria-label="Health assistant">
-            <button className="quiet" onClick={() => setAssistantOpen(false)}>
-              Close ×
-            </button>
-            <HealthChat
-              key={`${profile.id}:${context.revision}`}
-              guard={guard}
-              profile={profile}
-            />
-          </section>
+        />
+      )}
+      {profilePanel && account && (
+        <SideDrawer title={profilePanel} onClose={() => setProfilePanel('')}>
+          {profilePanel === 'Switch Profile' ? (
+            <>
+              <p className="muted">
+                Choose whose reports and conversations you want to see.
+              </p>
+              <label>
+                Viewing profile
+                <select
+                  aria-label="Viewing profile"
+                  value={profile?.id ?? ''}
+                  disabled={busy}
+                  onChange={(e) => void select(e.target.value)}
+                >
+                  <option disabled value="">
+                    Select a profile
+                  </option>
+                  {profiles.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.displayName} · {p.kind === 'self' ? 'Me' : 'Family'}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <div className="profile-switch-list">
+                {profiles.map((p) => (
+                  <button
+                    key={p.id}
+                    onClick={() => void select(p.id)}
+                    aria-pressed={p.id === profile?.id}
+                  >
+                    <span className="profile-avatar">
+                      {p.displayName.charAt(0)}
+                    </span>
+                    <span>
+                      <strong>{p.displayName}</strong>
+                      <small>
+                        {p.kind === 'self' ? 'Your profile' : 'Family profile'}
+                      </small>
+                    </span>
+                    {p.id === profile?.id ? (
+                      <Icon name="check" size={18} />
+                    ) : (
+                      <Icon name="chevron" size={18} />
+                    )}
+                  </button>
+                ))}
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="profile-details-hero">
+                <span className="profile-avatar">
+                  <Icon name="user" size={30} />
+                </span>
+                <h3>
+                  {profiles.find(
+                    (p) => p.kind === 'self' && p.ownerId === account.id,
+                  )?.displayName ?? 'Your account'}
+                </h3>
+                <p>{account.email}</p>
+              </div>
+              <p>
+                Your sign-in account and the family profile you’re viewing are
+                managed separately.
+              </p>
+              <button
+                className="secondary"
+                onClick={() => {
+                  setProfilePanel('');
+                  setManagerOpen(true);
+                }}
+              >
+                Manage Profiles
+              </button>
+              <button onClick={() => void signOut()}>Sign out</button>
+            </>
+          )}
         </SideDrawer>
       )}
       {utility && (
@@ -539,65 +600,11 @@ function ProfileContent({
 }) {
   if (tab === 'dashboard' || search)
     return <HealthDashboard profile={profile} guard={guard} search={search} />;
-  if (['health', 'reports', 'insights'].includes(tab))
-    return (
-      <ReportCenter
-        profile={profile}
-        guard={guard}
-        mode={
-          tab === 'insights'
-            ? 'insights'
-            : tab === 'reports'
-              ? 'reports'
-              : 'all'
-        }
-      />
-    );
-  return (
-    <div className="overview-grid">
-      <section className="card empty">
-        {tab === 'community' && <span className="badge">Read-only pilot</span>}
-        <EmptyState
-          title={
-            tab === 'wellness'
-              ? 'Your next chapter in wellbeing.'
-              : !communityEnabled
-                ? 'Community is currently paused.'
-                : 'Fresh perspectives are on their way.'
-          }
-        >
-          <p>
-            {tab === 'wellness'
-              ? 'Goals, habits and wellness plans will appear here when those services are available.'
-              : !communityEnabled
-                ? 'You can continue using My Health and My Wellness.'
-                : 'There are no published posts or trends yet. This pilot is read-only.'}
-          </p>
-        </EmptyState>
-        <span className="badge">
-          {tab === 'community' && !communityEnabled
-            ? 'Feature paused'
-            : 'Coming to the pilot'}
-        </span>
-        <span className="unavailable">
-          {tab === 'wellness'
-            ? 'Wellness tracking is not available yet'
-            : 'Publishing is not available in this pilot'}
-        </span>
-      </section>
-      <section className="card insight-card">
-        <p className="eyebrow">Built around you</p>
-        <h2>One person. One clear context.</h2>
-        <p>
-          You’re currently viewing {profile.displayName}. Use the profile picker
-          to move between members of your family.
-        </p>
-        <div className="orb" aria-hidden="true">
-          <Icon name="spark" size={28} />
-        </div>
-      </section>
-    </div>
-  );
+  if (tab === 'health') return <HealthHome profile={profile} guard={guard} />;
+  if (tab === 'reports' || tab === 'insights')
+    return <ReportCenter profile={profile} guard={guard} mode={tab} />;
+  if (tab === 'wellness') return <WellnessPage />;
+  return <CommunityPage enabled={communityEnabled} />;
 }
 
 function ProfileManager({
@@ -606,12 +613,14 @@ function ProfileManager({
   selected,
   guard,
   onCreated,
+  onSelect,
 }: {
   profiles: PublicProfile[];
   accountId: string;
   selected: PublicProfile | null;
   guard: ReturnType<typeof createProfileView>;
   onCreated: () => Promise<void>;
+  onSelect: (id: string) => Promise<void>;
 }) {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
@@ -700,6 +709,37 @@ function ProfileManager({
           Add profile
         </button>
       </form>
+      {!!profiles.length && (
+        <div
+          className="managed-profiles"
+          role="list"
+          aria-label="Managed profiles"
+        >
+          {profiles.map((p) => (
+            <div role="listitem" key={p.id}>
+              <button
+                type="button"
+                onClick={() => void onSelect(p.id)}
+                aria-pressed={selected?.id === p.id}
+              >
+                <span className="profile-avatar">
+                  {p.displayName.charAt(0)}
+                </span>
+                <span>
+                  <strong>{p.displayName}</strong>
+                  <small>
+                    {p.kind === 'self' ? 'Your profile' : 'Family profile'}
+                  </small>
+                </span>
+                <Icon
+                  name={selected?.id === p.id ? 'check' : 'chevron'}
+                  size={17}
+                />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
       {selected?.ownerId === accountId && (
         <form className="contact-form" onSubmit={saveContact} key={selected.id}>
           <label>

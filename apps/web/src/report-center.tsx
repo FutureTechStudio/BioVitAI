@@ -16,6 +16,7 @@ import { createProfileView } from '../../../shared/profile-context/src/index';
 import { reportRequest, ApiError, friendlyError } from './api';
 import { HealthIntelligence } from './health-intelligence';
 import { ReportComparison } from './report-comparison';
+import { Icon, StatusBadge } from './design-system';
 
 function message(error: unknown) {
   if (error instanceof ApiError)
@@ -199,10 +200,73 @@ export function ReportCenter({
   }
   return (
     <>
-      <div className="section-title">
-        <h2>Your health overview</h2>
-        <span className="muted">For {profile.displayName}</span>
-      </div>
+      {mode === 'reports' && (
+        <>
+          <div className="report-summary">
+            <div>
+              <span className="section-icon tone-teal">
+                <Icon name="reports" />
+              </span>
+              <span>
+                In your library
+                <strong>
+                  {reports.filter((r) => r.state !== 'cancelled').length}{' '}
+                  reports
+                </strong>
+              </span>
+            </div>
+            <div>
+              <span className="section-icon tone-green">
+                <Icon name="check" />
+              </span>
+              <span>
+                Source checked
+                <strong>
+                  {reports.filter((r) => r.state === 'verified').length}{' '}
+                  verified
+                </strong>
+              </span>
+            </div>
+            <div>
+              <span className="section-icon tone-amber">
+                <Icon name="search" />
+              </span>
+              <span>
+                A closer look
+                <strong>
+                  {
+                    reports.filter((r) =>
+                      ['review_needed', 'quarantined'].includes(r.state),
+                    ).length
+                  }{' '}
+                  need review
+                </strong>
+              </span>
+            </div>
+          </div>
+          <nav className="report-journey" aria-label="Report workflow">
+            <a href="#upload">
+              <b>01</b>
+              <span>
+                Add your original<small>Upload a PDF or image</small>
+              </span>
+            </a>
+            <a href="#report-library">
+              <b>02</b>
+              <span>
+                Review the details
+                <small>Check identity and extracted values</small>
+              </span>
+            </a>
+            <a href="#compare">
+              <b>03</b>
+              <span>
+                Connect the evidence<small>Compare verified results</small>
+              </span>
+            </a>
+          </nav>
+        </>
+      )}
       {mode !== 'reports' && (
         <HealthIntelligence
           key={
@@ -216,6 +280,9 @@ export function ReportCenter({
       )}
       {mode !== 'insights' && (
         <section className="card upload-card" id="upload">
+          <span className="section-icon tone-blue">
+            <Icon name="upload" size={26} />
+          </span>
           <h2>Add a report</h2>
           <p className="muted">
             PDF or image · up to 20 MiB and 50 pages. Use synthetic reports in
@@ -263,8 +330,11 @@ export function ReportCenter({
           <p>Add a report to begin. Every result stays linked to its source.</p>
         </section>
       ) : (
-        <section className="card report-library">
-          <h2>Reports</h2>
+        <section className="card report-library" id="report-library">
+          <div className="section-title">
+            <h2>Reports</h2>
+            <span className="badge">{reports.length} source documents</span>
+          </div>
           <ul>
             {reports.map((report) => (
               <li key={report.id}>
@@ -272,13 +342,31 @@ export function ReportCenter({
                   className="report-row"
                   onClick={() => void open(report.id)}
                 >
-                  <strong>{report.fileName}</strong>
-                  <span>
-                    {report.state.replaceAll('_', ' ')} ·{' '}
-                    {report.scanState === 'unavailable'
-                      ? 'Scanner unavailable'
-                      : report.stage}
+                  <span className="report-file-icon">
+                    <Icon name="reports" size={22} />
                   </span>
+                  <span className="report-file-name">
+                    <strong>{report.fileName}</strong>
+                    <small>
+                      {report.scanState === 'unavailable'
+                        ? 'Scanner unavailable'
+                        : report.stage.replaceAll('_', ' ')}
+                    </small>
+                  </span>
+                  <StatusBadge
+                    tone={
+                      report.state === 'verified'
+                        ? 'success'
+                        : ['quarantined', 'failed'].includes(report.state)
+                          ? 'error'
+                          : report.state === 'review_needed'
+                            ? 'warning'
+                            : 'neutral'
+                    }
+                  >
+                    {report.state.replaceAll('_', ' ')}
+                  </StatusBadge>
+                  <Icon name="chevron" size={17} />
                 </button>
               </li>
             ))}

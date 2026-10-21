@@ -4,11 +4,7 @@ import { z } from 'zod';
 import { ObservationEvidenceSchema } from '../../../shared/contracts/src/intelligence';
 import type { createProfileView } from '../../../shared/profile-context/src/index';
 import { reportRequest } from './api';
-import {
-  BodyInsights,
-  BiomarkerInsights,
-  TrendSparkline,
-} from './health-dashboard';
+import { BiomarkerInsights, TrendSparkline } from './health-dashboard';
 const Result = z.object({
   version: z.string(),
   cohorts: z.array(
@@ -51,7 +47,26 @@ export function HealthIntelligence({
   }, [guard, revision]);
   return (
     <section className="health-intelligence">
-      <h2>Verified health evidence</h2>
+      <div className="insights-intro">
+        <p className="eyebrow">An evidence-first view</p>
+        <h2>Verified health evidence</h2>
+        {data && (
+          <div className="insight-totals">
+            <span>
+              <strong>{data.cohorts.length}</strong> comparable groups
+            </span>
+            <span>
+              <strong>
+                {data.cohorts.reduce((n, c) => n + c.observations.length, 0)}
+              </strong>{' '}
+              verified trend results
+            </span>
+            <span>
+              <strong>{data.exclusions.length}</strong> excluded from trends
+            </span>
+          </div>
+        )}
+      </div>
       {error && <p role="alert">{error}</p>}
       {data && (
         <>
@@ -61,42 +76,50 @@ export function HealthIntelligence({
           </p>
           {!data.cohorts.length && <p>No comparable trend is available yet.</p>}
           <BiomarkerInsights analysis={data} guard={guard} />
-          {data.cohorts.map((c, index) => (
-            <article key={index}>
-              <h3>
-                {c.label} · {c.unit}
-              </h3>
-              <TrendChart label={c.label} rows={c.observations} />
-              <table>
-                <caption>
-                  Comparable source results, ordered by observation date
-                </caption>
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Result</th>
-                    <th>Source</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {c.observations.map((o) => (
-                    <tr key={o.id}>
-                      <td>{o.date}</td>
-                      <td>
-                        {o.value} {o.unit}
-                      </td>
-                      <td>
-                        <button onClick={() => onSource(o.reportId)}>
-                          Why this value? Page {o.pageNumber} · revision{' '}
-                          {o.revision}
-                        </button>
-                      </td>
+          {!!data.cohorts.length && (
+            <div className="section-title trend-heading">
+              <h2>Longitudinal trends</h2>
+              <span className="badge">Exact values, original sources</span>
+            </div>
+          )}
+          <div className="trend-collection">
+            {data.cohorts.map((c, index) => (
+              <article key={index} className="card trend-card">
+                <h3>
+                  {c.label} · {c.unit}
+                </h3>
+                <TrendChart label={c.label} rows={c.observations} />
+                <table>
+                  <caption>
+                    Comparable source results, ordered by observation date
+                  </caption>
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Result</th>
+                      <th>Source</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </article>
-          ))}
+                  </thead>
+                  <tbody>
+                    {c.observations.map((o) => (
+                      <tr key={o.id}>
+                        <td>{o.date}</td>
+                        <td>
+                          {o.value} {o.unit}
+                        </td>
+                        <td>
+                          <button onClick={() => onSource(o.reportId)}>
+                            Why this value? Page {o.pageNumber} · revision{' '}
+                            {o.revision}
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </article>
+            ))}
+          </div>
           {!!data.exclusions.length && (
             <details>
               <summary>
@@ -115,7 +138,6 @@ export function HealthIntelligence({
               </ul>
             </details>
           )}
-          <BodyInsights organs={data.organs} />
         </>
       )}
     </section>

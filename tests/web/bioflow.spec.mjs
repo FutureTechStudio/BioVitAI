@@ -3,6 +3,7 @@ import { AxeBuilder } from '@axe-core/playwright';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
+import { profileAction } from './ui.mjs';
 
 test('BioFlow routes, modal focus, responsive layouts and unavailable states', async ({
   page,
@@ -77,7 +78,7 @@ test('BioFlow routes, modal focus, responsive layouts and unavailable states', a
     await expect(
       page.getByRole('status', { name: 'Loading health evidence' }),
     ).toHaveCount(0);
-    if (['/', '/dashboard', '/health', '/insights'].includes(route))
+    if (['/', '/dashboard', '/health'].includes(route))
       await expect(
         page.getByRole('heading', { name: 'Your body insights' }),
       ).toBeVisible();
@@ -101,11 +102,11 @@ test('BioFlow routes, modal focus, responsive layouts and unavailable states', a
   await expect(
     page.getByRole('heading', { name: 'Your body insights' }),
   ).toBeVisible();
-  const trigger = page.getByRole('button', {
-    name: 'Manage profiles',
-    exact: true,
-  });
-  await trigger.click();
+  const trigger = page.getByRole('button', { name: /^Profile menu,/ });
+  await expect(
+    page.locator('main').getByRole('button', { name: /Manage profiles/i }),
+  ).toHaveCount(0);
+  await profileAction(page, 'Manage Profiles');
   await expect(page.getByRole('dialog')).toContainText('Your family profiles');
   await page.keyboard.press('Escape');
   await expect(page.getByRole('dialog')).toHaveCount(0);
@@ -128,9 +129,12 @@ test('BioFlow routes, modal focus, responsive layouts and unavailable states', a
     .getByRole('button', { name: 'Health assistant', exact: true })
     .click();
   await expect(page.getByRole('dialog')).toContainText(
-    'Optional AI explanations',
+    'Make sense of your health story.',
   );
   await page.keyboard.press('Escape');
+  await expect(
+    page.getByRole('dialog', { name: 'Health assistant' }),
+  ).toHaveCount(0);
   await page.getByLabel('From', { exact: true }).fill('2026-10-21');
   await page.getByLabel('To', { exact: true }).fill('2026-10-01');
   await expect(
@@ -169,10 +173,6 @@ test('BioFlow routes, modal focus, responsive layouts and unavailable states', a
     ),
     'RTL and 200% text overflow',
   ).toBe(true);
-  await expect(page.locator('.body-connector-rtl').first()).toHaveCSS(
-    'display',
-    'inline',
-  );
   await page.screenshot({
     path: path.join(folder, 'bioflow-rtl-large-text.png'),
     fullPage: true,
@@ -214,8 +214,11 @@ test('BioFlow routes, modal focus, responsive layouts and unavailable states', a
   await expect(
     page.getByRole('heading', { name: 'Welcome back.' }),
   ).toBeVisible();
-  await page.goto('/not-a-biovitai-page');
+  // Check the public 404 independently of the departing private view's redirects.
+  const publicPage = await page.context().newPage();
+  await publicPage.goto('/not-a-biovitai-page');
   await expect(
-    page.getByRole('heading', { name: 'This page isn’t available.' }),
+    publicPage.getByRole('heading', { name: 'This page isn’t available.' }),
   ).toBeVisible();
+  await publicPage.close();
 });

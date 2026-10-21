@@ -1,0 +1,63 @@
+{
+  "kind": "Synthetic local browser presentation audit",
+  "routes": [
+    {
+      "route": "dashboard",
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "route": "health",
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "route": "reports",
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "route": "insights",
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "route": "wellness",
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "route": "community",
+      "violations": [],
+      "overflow": false
+    }
+  ],
+  "assistant": {
+    "chatViolations": []
+  },
+  "responsive": {
+    "viewports": [
+      1024,
+      390,
+      320
+    ],
+    "rtlTextScale": "200%",
+    "passed": true
+  },
+  "notes": "Screenshots contain synthetic demo data. Accent colors identify areas, not clinical status.",
+  "browserRegressions": {
+    "chromiumReports": {
+      "passed": 5,
+      "duration": "2.3m"
+    },
+    "chromiumCommunityOff": {
+      "passed": 4,
+      "skipped": 1,
+      "duration": "25.5s"
+    },
+    "webkit": {
+      "passed": 2,
+      "duration": "52.2s"
+    }
+  }
+}

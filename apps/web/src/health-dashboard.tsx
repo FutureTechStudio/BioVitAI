@@ -109,6 +109,7 @@ export function HealthDashboard({
       value: active.length,
       note: 'Active source documents',
       icon: 'reports',
+      tone: 'teal',
       href: '/reports',
     },
     {
@@ -116,6 +117,7 @@ export function HealthDashboard({
       value: reports.filter((r) => r.state === 'verified').length,
       note: 'Source checked',
       icon: 'check',
+      tone: 'green',
       href: '/reports',
     },
     {
@@ -123,6 +125,7 @@ export function HealthDashboard({
       value: observations.length,
       note: 'Distinct observations',
       icon: 'health',
+      tone: 'blue',
       href: '/insights',
     },
     {
@@ -132,6 +135,7 @@ export function HealthDashboard({
       ).length,
       note: 'Includes identity review',
       icon: 'search',
+      tone: 'amber',
       href: '/reports',
     },
     {
@@ -139,6 +143,7 @@ export function HealthDashboard({
       value: analysis.cohorts.length,
       note: 'Comparable evidence',
       icon: 'insights',
+      tone: 'violet',
       href: '/insights',
     },
   ];
@@ -163,7 +168,11 @@ export function HealthDashboard({
       </section>
       <div className="metric-grid">
         {metrics.map((m) => (
-          <Link href={m.href} className="card metric-card" key={m.label}>
+          <Link
+            href={m.href}
+            className={`card metric-card tone-${m.tone}`}
+            key={m.label}
+          >
             <span className="metric-icon">
               <Icon name={m.icon} />
             </span>
@@ -183,7 +192,7 @@ export function HealthDashboard({
             guard={guard}
             search={search}
           />
-          <BioCard>
+          <BioCard className="next-steps-card">
             <div className="section-title">
               <h2>
                 <Icon name="spark" size={18} /> Your next steps
@@ -370,6 +379,7 @@ export function BodyInsights({ organs }: { organs: Analysis['organs'] }) {
               <button
                 data-drawer-trigger
                 className="body-card"
+                data-organ={o.name}
                 key={o.name}
                 onClick={() => setSelected(o)}
               >
@@ -551,7 +561,7 @@ export function BiomarkerInsights({
         <StatusBadge>Verified evidence</StatusBadge>
         <StatusBadge>Clinical interpretation pending</StatusBadge>
       </div>
-      <div className="filter-row">
+      <div className="filter-row biomarker-filters">
         <label>
           Search biomarkers
           <input

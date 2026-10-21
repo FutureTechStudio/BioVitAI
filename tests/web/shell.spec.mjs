@@ -5,6 +5,7 @@ import path from 'node:path';
 import sharp from 'sharp';
 import { Buffer } from 'node:buffer';
 import { AxeBuilder } from '@axe-core/playwright';
+import { profileAction, switchProfile, syntheticSignup } from './ui.mjs';
 
 // Synthetic local-only acceptance test. Private links are never logged or traced.
 async function mailFor(email, kind) {
@@ -66,7 +67,7 @@ test('real local upload, source verification, comparison and unconfigured AI jou
     headers,
     data: { profileId: created.profile.id, expectedRevision: 0 },
   });
-  await page.goto('/health');
+  await page.goto('/reports');
   for (const [index, amount] of ['15.50', '20.50'].entries()) {
     const date = `2026-10-${20 + index}`,
       lines = [
@@ -150,9 +151,10 @@ test('real local upload, source verification, comparison and unconfigured AI jou
     .getByRole('button', { name: 'Save corrected revision' })
     .click();
   await expect(page.locator('.history')).toContainText('revision 2');
-  const comparison = page
-    .getByRole('heading', { name: 'Compare reports', exact: true })
-    .locator('..');
+  const comparison = page.getByRole('region', {
+    name: 'Report comparison',
+    exact: true,
+  });
   await comparison
     .getByLabel('First report')
     .selectOption({ label: 'synthetic-0.png' });
@@ -164,6 +166,10 @@ test('real local upload, source verification, comparison and unconfigured AI jou
     .click();
   await expect(comparison.getByText(/15.50 mg\/L/)).toBeVisible();
   await expect(comparison.getByText(/20.50 mg\/L/)).toBeVisible();
+  await page.getByRole('link', { name: 'Insights', exact: true }).click();
+  await expect(
+    page.getByRole('heading', { name: 'Longitudinal trends', exact: true }),
+  ).toBeVisible();
   await expect(
     page.getByRole('img', { name: /Synthetic Marker trend/ }).first(),
   ).toBeVisible();
@@ -197,7 +203,10 @@ test('real local upload, source verification, comparison and unconfigured AI jou
   await page.getByRole('link', { name: 'My Health', exact: true }).click();
   await expect(page).toHaveURL(/\/health$/);
   await expect(
-    page.getByRole('heading', { name: 'My Health', exact: true }),
+    page.getByRole('heading', {
+      name: 'Your health, in perspective.',
+      exact: true,
+    }),
   ).toBeVisible();
   await page.getByRole('button', { name: /Health assistant/ }).click();
   await page
@@ -210,16 +219,22 @@ test('real local upload, source verification, comparison and unconfigured AI jou
   await expect(
     page.getByText('AI unavailable: provider not configured'),
   ).toBeVisible();
+  await page.getByText('Privacy & AI consent', { exact: true }).click();
   await page.getByRole('button', { name: 'Withdraw AI consent' }).click();
   await page.getByLabel(/Ask about Synthetic Subject/).fill('Explain again');
   await page.getByRole('button', { name: 'Ask AI', exact: true }).click();
   await expect(
-    page.getByText('This action is unavailable or your access has changed.'),
+    page.getByText(
+      'Choose whether to allow optional AI processing below before asking a question.',
+    ),
   ).toBeVisible();
   await page
-    .getByRole('region', { name: 'Health assistant', exact: true })
-    .getByRole('button', { name: 'Close ×' })
+    .getByRole('button', { name: 'Close assistant', exact: true })
     .click();
+  await page.goto('/insights');
+  await expect(
+    page.getByRole('heading', { name: 'Longitudinal trends', exact: true }),
+  ).toBeVisible();
   const audit = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
     .analyze();
@@ -287,18 +302,21 @@ test('account screens, family profiles, context switching, tabs and password rec
   await page.getByLabel('Profile name', { exact: true }).fill('Pilot Member A');
   await page.getByLabel('Profile type').selectOption('family');
   await page.getByRole('button', { name: 'Add profile', exact: true }).click();
-  const picker = page.getByRole('combobox', { name: 'Viewing profile' });
   await expect(
-    picker.getByRole('option', { name: 'Pilot Member A · Family' }),
-  ).toBeAttached();
+    page
+      .getByRole('list', { name: 'Managed profiles' })
+      .getByText('Pilot Member A', { exact: true }),
+  ).toBeVisible();
   await page.getByLabel('Profile name', { exact: true }).fill('Pilot Member B');
   await page.getByLabel('Profile type').selectOption('family');
   await page.getByRole('button', { name: 'Add profile', exact: true }).click();
   await expect(
-    picker.getByRole('option', { name: 'Pilot Member B · Family' }),
-  ).toBeAttached();
+    page
+      .getByRole('list', { name: 'Managed profiles' })
+      .getByText('Pilot Member B', { exact: true }),
+  ).toBeVisible();
   await page.getByRole('button', { name: 'Close panel', exact: true }).click();
-  await picker.selectOption({ label: 'Pilot Member A · Family' });
+  await switchProfile(page, { label: 'Pilot Member A · Family' });
   await expect(page.getByLabel('Current profile')).toContainText(
     'Pilot Member A',
   );
@@ -306,7 +324,7 @@ test('account screens, family profiles, context switching, tabs and password rec
     .getByRole('button', { name: 'Health assistant', exact: false })
     .click();
   await expect(
-    page.getByRole('heading', { name: 'Here for Pilot Member A' }),
+    page.getByRole('dialog', { name: 'Health assistant', exact: true }),
   ).toBeVisible();
   let releaseSelection;
   const selectionGate = new Promise((resolve) => {
@@ -316,12 +334,12 @@ test('account screens, family profiles, context switching, tabs and password rec
     if (route.request().method() === 'POST') await selectionGate;
     await route.continue();
   });
-  await picker.selectOption(
-    { label: 'Pilot Member B · Family' },
-    { force: true },
-  );
+  await profileAction(page, 'Switch Profile');
+  await page
+    .getByRole('combobox', { name: 'Viewing profile' })
+    .selectOption({ label: 'Pilot Member B · Family' });
   await expect(
-    page.getByRole('heading', { name: 'Here for Pilot Member A' }),
+    page.getByRole('dialog', { name: 'Health assistant', exact: true }),
   ).toHaveCount(0);
   await expect(
     page.getByRole('heading', { name: 'Opening your space…' }),
@@ -331,9 +349,7 @@ test('account screens, family profiles, context switching, tabs and password rec
     'Pilot Member B',
   );
   await page.unroute('**/v1/profile-context');
-  await page
-    .getByRole('button', { name: 'Manage profiles', exact: false })
-    .click();
+  await profileAction(page, 'Manage Profiles');
   await page
     .getByLabel('New contact email for Pilot Member B')
     .fill('synthetic-member@example.test');
@@ -394,9 +410,7 @@ test('account screens, family profiles, context switching, tabs and password rec
     ),
     fullPage: true,
   });
-  await page
-    .getByRole('button', { name: 'Manage profiles', exact: true })
-    .click();
+  await profileAction(page, 'Manage Profiles');
   await page.getByRole('button', { name: 'Sign out', exact: true }).click();
   await expect(
     page.getByRole('heading', { name: 'Welcome back.' }),
@@ -419,8 +433,11 @@ test('account screens, family profiles, context switching, tabs and password rec
   await page.getByLabel('Password', { exact: true }).fill(replacement);
   await page.getByRole('button', { name: 'Sign in →' }).click();
   await expect(page.getByLabel('Current profile')).toContainText('Choose who');
+  await profileAction(page, 'Switch Profile');
   await expect(
-    picker.getByRole('option', { name: 'Pilot Member B · Family' }),
+    page
+      .getByRole('combobox', { name: 'Viewing profile' })
+      .getByRole('option', { name: 'Pilot Member B · Family' }),
   ).toBeAttached();
   expect(consoleErrors).toEqual([]);
 });
@@ -438,7 +455,7 @@ test('separate browser sessions cannot select, read or mutate another account’
     const password = `Synthetic-${randomUUID()}!`;
     expect(
       (
-        await context.request.post('/api/auth/sign-up/email', {
+        await syntheticSignup(context.request, {
           headers,
           data: {
             email,
@@ -519,6 +536,7 @@ test('separate browser sessions cannot select, read or mutate another account’
     await expect(page.getByLabel('Current profile')).toContainText(
       'Outsider subject',
     );
+    await profileAction(page, 'Switch Profile');
     await expect(
       page
         .getByRole('combobox', { name: 'Viewing profile' })

@@ -5,6 +5,7 @@ import { ObservationEvidenceSchema } from '../../../shared/contracts/src/intelli
 import type { Ingestion } from '../../../shared/contracts/src/reports';
 import type { createProfileView } from '../../../shared/profile-context/src/index';
 import { reportRequest, friendlyError } from './api';
+import { Icon } from './design-system';
 const Result = z.object({
   pairs: z.array(
     z.object({
@@ -50,8 +51,20 @@ export function ReportComparison({
     }
   }
   return (
-    <section className="card">
-      <h2>Compare reports</h2>
+    <section
+      className="card comparison-card"
+      id="compare"
+      aria-label="Report comparison"
+    >
+      <div className="section-title">
+        <h2>Compare reports</h2>
+        <span className="section-icon tone-blue">
+          <Icon name="switch" />
+        </span>
+      </div>
+      <p className="muted">
+        Two sources. Each result kept distinct, with its original context.
+      </p>
       <form
         onSubmit={(e) => {
           e.preventDefault();

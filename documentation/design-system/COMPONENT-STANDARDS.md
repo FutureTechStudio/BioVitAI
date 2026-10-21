@@ -8,4 +8,6 @@ HealthDashboard composes actual report counts, BodyInsights and BiomarkerInsight
 
 Drawers use native browser modal dialogs with Escape, focus containment and focus restoration. Native overlays use Modal and explicit close/back handling. Loading, empty, failed, disabled, unavailable and permission-denied are distinct states, not different wording for a single blank panel.
 
+The web header uses ProfileMenu: a keyboard-operated avatar menu with My Profile, Switch Profile and Manage Profiles. Profile management lives in its drawer; a selected-profile card is not repeated in the page. AssistantWindow opens from the bottom-right floating icon, is nonmodal in compact mode and uses a modal dialog in full-screen mode. Full screen adds authorized conversation history. HealthChat receives a controlled conversation ID so resizing, reopening and navigation retain the active conversation.
+
 Do not build unused Wellness or Community components to imply missing services are operational. Register planned patterns separately until a functional implementation exists.

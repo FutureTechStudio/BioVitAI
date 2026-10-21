@@ -6,7 +6,9 @@ Engineering evidence recorded 21–22 October 2026. This is a synthetic local re
 
 The pre-redesign application was committed and pushed as [`ced0d80bfe70d81258acadf63eca85b06fb2a9ba`](https://github.com/FutureTechStudio/BioVitAI/commit/ced0d80bfe70d81258acadf63eca85b06fb2a9ba). `git ls-remote origin refs/heads/main` matched the local checkpoint before `codex/bioflow-ui` was created. The migration preserves the server, migrations, contracts and existing clinical rules. No force push or merge to main is part of this work.
 
-The inventory registers 111 surfaces: 24 route/layout files, 67 named rendering components, 16 workflow-state groups, one brand-asset group and three explicitly excluded template/system surfaces. All 108 applicable surfaces have their presentation implementation accounted for; this does not mean every state has passed acceptance. A workflow-state group is not a count of individually exercised states. The 24 route/layout files include redirects, error/loading boundaries and navigators; they do not represent 24 distinct product destinations. See the independently recorded validation totals in [the coverage matrix](UI-MIGRATION-COVERAGE.md).
+The inventory registers 118 surfaces: 24 route/layout files, 74 named rendering components, 16 workflow-state groups, one brand-asset group and three explicitly excluded template/system surfaces. All 115 applicable surfaces have their presentation implementation accounted for; this does not mean every state has passed acceptance. A workflow-state group is not a count of individually exercised states. The 24 route/layout files include redirects, error/loading boundaries and navigators; they do not represent 24 distinct product destinations. See the independently recorded validation totals in [the coverage matrix](UI-MIGRATION-COVERAGE.md).
+
+The [22 October refinement record](BIOFLOW-REFINEMENTS-2026-10-22.md) supersedes the initial header/profile-strip/sidebar-assistant presentation and documents the session-aware floating assistant, avatar menu, broader accents and distinct tab designs. Initial screenshots below remain historical evidence of the first migration.
 
 ## Delivered modules
 
