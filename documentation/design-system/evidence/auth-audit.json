@@ -1,0 +1,45 @@
+{
+  "kind": "presentation-state audit; synthetic reset token is deliberately invalid and never submitted",
+  "results": [
+    {
+      "mode": "signin",
+      "axeViolations": 0,
+      "viewports": [
+        1280,
+        390
+      ]
+    },
+    {
+      "mode": "signup",
+      "axeViolations": 0,
+      "viewports": [
+        1280,
+        390
+      ]
+    },
+    {
+      "mode": "forgot",
+      "axeViolations": 0,
+      "viewports": [
+        1280,
+        390
+      ]
+    },
+    {
+      "mode": "verify",
+      "axeViolations": 0,
+      "viewports": [
+        1280,
+        390
+      ]
+    },
+    {
+      "mode": "reset",
+      "axeViolations": 0,
+      "viewports": [
+        1280,
+        390
+      ]
+    }
+  ]
+}

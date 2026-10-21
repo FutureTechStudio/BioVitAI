@@ -10,7 +10,7 @@
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#F5FAF7"
     },
     "ios": {
       "bundleIdentifier": "com.biovitai.pilot",
@@ -30,7 +30,7 @@
     "android": {
       "package": "com.biovitai.pilot",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#F5FAF7",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
@@ -44,7 +44,8 @@
       "./plugins/with-loopback-http.cjs",
       "expo-secure-store",
       "expo-web-browser",
-      "expo-router"
+      "expo-router",
+      "expo-font"
     ]
   }
 }

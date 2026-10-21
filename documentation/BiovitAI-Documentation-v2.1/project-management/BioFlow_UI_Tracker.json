@@ -1,0 +1,58 @@
+[
+  {
+    "ID": "BF-001",
+    "Workstream": "Inventory and design system",
+    "Status": "Done",
+    "Related Tasks": "BV-001; BV-012",
+    "Evidence": "documentation/design-system/VALIDATION-REPORT.md",
+    "Notes": "Inventory covers 111 discovered surfaces; shared tokens, licensed local fonts, primitives and drift guards implemented. Validation is recorded separately."
+  },
+  {
+    "ID": "BF-002",
+    "Workstream": "Web shell and dashboard",
+    "Status": "Done",
+    "Related Tasks": "BV-012; BV-019; BV-020",
+    "Evidence": "documentation/design-system/VALIDATION-REPORT.md",
+    "Notes": "Expanded web shell, actual evidence dashboard, neutral body, authorized search, filters and provenance implemented. Chromium and WebKit audits passed."
+  },
+  {
+    "ID": "BF-003",
+    "Workstream": "Reports and health evidence",
+    "Status": "Done",
+    "Related Tasks": "BV-014–BV-023",
+    "Evidence": "documentation/design-system/VALIDATION-REPORT.md",
+    "Notes": "Real scanner/OCR production journey passed upload, identity, verify, append correction, compare and source. Rare UI branches remain explicit in coverage."
+  },
+  {
+    "ID": "BF-004",
+    "Workstream": "Android migration",
+    "Status": "In Review",
+    "Related Tasks": "BV-012; BV-014–BV-028",
+    "Evidence": "documentation/design-system/VALIDATION-REPORT.md",
+    "Notes": "APK/export, full emulator report/chat, comparison, caregiver revocation, focused routes and 150% text passed. TalkBack service smoke passed; manual/device acceptance remains pending."
+  },
+  {
+    "ID": "BF-005",
+    "Workstream": "AI, profiles and supporting UI",
+    "Status": "Done",
+    "Related Tasks": "BV-009; BV-024–BV-028",
+    "Evidence": "documentation/design-system/VALIDATION-REPORT.md",
+    "Notes": "Auth/recovery, family/contact controls, consent/chat and honest unavailable/paused states migrated. Live AI presentation still requires configured provider."
+  },
+  {
+    "ID": "BF-006",
+    "Workstream": "Regression and design QA",
+    "Status": "In Progress",
+    "Related Tasks": "BV-029–BV-031",
+    "Evidence": "documentation/design-system/VALIDATION-REPORT.md",
+    "Notes": "51 core and 59 DB tests pass; production Chromium and WebKit gates pass. Firefox runtime, manual screen-reader/native RTL and physical-device validation remain pending."
+  },
+  {
+    "ID": "BF-007",
+    "Workstream": "Coverage and governance",
+    "Status": "Done",
+    "Related Tasks": "BV-001; BV-012; BV-031",
+    "Evidence": "documentation/design-system/VALIDATION-REPORT.md",
+    "Notes": "All surfaces source-reviewed and accounted; coverage dimensions and limitations retained. Original 51 tasks, decisions, workbook sheets and formal review statuses preserved."
+  }
+]

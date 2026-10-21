@@ -1,3 +1,4 @@
+import { BioText as Text, theme } from './design-system';
 import { Action as Pressable } from './action';
 import {
   createContext,
@@ -8,14 +9,7 @@ import {
   useRef,
 } from 'react';
 import type { ReactNode } from 'react';
-import {
-  AppState,
-  View,
-  Text,
-  Modal,
-  ScrollView,
-  StyleSheet,
-} from 'react-native';
+import { AppState, View, Modal, ScrollView, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
 import {
   CurrentAccountSchema,
@@ -41,6 +35,20 @@ type Session = {
   externalPicker: <T>(work: () => Promise<T>) => Promise<T>;
 };
 const Context = createContext<Session | null>(null);
+// A focus/background transition can invalidate a screen before React unmounts it.
+// Treat that interval as cancelled work instead of throwing from a passive effect.
+export function requestProfile(guard: Session['guard']) {
+  try {
+    return guard.request();
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      error.message === 'PROFILE_SELECTION_REQUIRED'
+    )
+      return null;
+    throw error;
+  }
+}
 export function SessionProvider({ children }: { children: ReactNode }) {
   const [account, setAccount] = useState<Session['account']>(null),
     [context, setContext] = useState<PublicProfileContext>({
@@ -210,12 +218,20 @@ export function ProfileHeader() {
         accessibilityValue={{
           text: session.context.profile?.displayName ?? 'No profile selected',
         }}
-        style={{ flex: 1, minWidth: 0, marginHorizontal: 10 }}
+        style={{
+          flex: 1,
+          minWidth: 0,
+          marginHorizontal: 10,
+          paddingVertical: 0,
+        }}
         onPress={() => setOpen(true)}
         disabled={session.busy}
       >
         <Text style={s.caption}>VIEWING PROFILE</Text>
-        <Text style={s.name} numberOfLines={2}>
+        <Text
+          style={[s.name, { fontSize: 16, lineHeight: 22, marginVertical: 2 }]}
+          numberOfLines={2}
+        >
           {session.busy
             ? 'Loading…'
             : (session.context.profile?.displayName ?? 'Select a profile')}{' '}
@@ -283,32 +299,37 @@ export function ProfileHeader() {
 }
 const s = StyleSheet.create({
   header: {
-    padding: 18,
-    backgroundColor: '#fff',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: theme.color.white,
     borderBottomWidth: 1,
-    borderColor: '#dfe7dc',
+    borderColor: theme.color.border,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  caption: { fontSize: 10, color: '#6b7e71' },
+  caption: { fontSize: 10, lineHeight: 14, color: theme.color.slate },
   name: {
     fontSize: 18,
-    color: '#254e3e',
+    color: theme.color.ink,
     fontWeight: '600',
     marginVertical: 6,
   },
   overlay: {
     flex: 1,
     justifyContent: 'center',
-    backgroundColor: '#0006',
+    backgroundColor: theme.color.overlay,
     padding: 25,
   },
   dialog: {
-    backgroundColor: '#fff',
-    borderRadius: 15,
+    backgroundColor: theme.color.white,
+    borderRadius: theme.radius.card,
     padding: 25,
     maxHeight: '80%',
   },
-  option: { paddingVertical: 18, borderBottomWidth: 1, borderColor: '#e2e8df' },
+  option: {
+    paddingVertical: 18,
+    borderBottomWidth: 1,
+    borderColor: theme.color.border,
+  },
 });

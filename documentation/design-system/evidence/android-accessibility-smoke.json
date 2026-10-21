@@ -1,0 +1,6 @@
+{
+  "kind": "emulator service-binding smoke only",
+  "talkBackServiceObserved": true,
+  "previousSettingsRestored": true,
+  "manualSpeechAndFocusAcceptance": "pending"
+}

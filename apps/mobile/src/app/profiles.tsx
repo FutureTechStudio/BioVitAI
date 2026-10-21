@@ -1,7 +1,8 @@
+import { BioText as Text } from '../design-system';
 import { Action as Pressable, Field as TextInput } from '../action';
 import { useState } from 'react';
-import { ScrollView, Text } from 'react-native';
-import { useSession } from '../session';
+import { ScrollView } from 'react-native';
+import { useSession, requestProfile } from '../session';
 import { nativeApi } from '../api';
 export default function Profiles() {
   const session = useSession(),
@@ -63,7 +64,8 @@ function Contact({ id, name }: { id: string; name: string }) {
     [busy, setBusy] = useState(false);
   const session = useSession();
   async function save() {
-    const ticket = session.guard.request();
+    const ticket = requestProfile(session.guard);
+    if (!ticket) return;
     setBusy(true);
     try {
       await nativeApi(

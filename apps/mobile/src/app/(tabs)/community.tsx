@@ -1,11 +1,17 @@
-import { View, Text } from 'react-native';
+import { BioText as Text, BioCard, theme } from '../../design-system';
+import { ScrollView } from 'react-native';
 export default function Community() {
   return (
-    <View style={{ padding: 25 }}>
-      <Text style={{ fontSize: 28 }}>A wider perspective.</Text>
-      <Text style={{ marginTop: 20 }}>
-        Read-only pilot. Published Community content is planned for P7.
-      </Text>
-    </View>
+    <ScrollView
+      style={{ backgroundColor: theme.color.canvas }}
+      contentContainerStyle={{ padding: 25, flexGrow: 1 }}
+    >
+      <BioCard>
+        <Text style={{ fontSize: 28 }}>A wider perspective.</Text>
+        <Text style={{ marginTop: 20 }}>
+          Read-only pilot. Published community content is not available yet.
+        </Text>
+      </BioCard>
+    </ScrollView>
   );
 }

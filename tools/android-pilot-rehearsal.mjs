@@ -212,328 +212,462 @@ async function post(route, data, cookie) {
     throw new Error('Synthetic account setup failed: ' + response.status);
   return response;
 }
-try {
-  if (process.argv.includes('--large-text-only')) {
-    await command(['shell', 'settings', 'put', 'system', 'font_scale', '1.5']);
-    changedFont = true;
-  }
-  const accountFile = path.join(root, 'synthetic-rehearsal-account.json');
-  let account = await fs
-    .readFile(accountFile, 'utf8')
-    .then(JSON.parse)
-    .catch(() => null);
-  const email = account?.email ?? `android-${randomUUID()}@example.test`,
-    password =
-      account?.password ?? 'BiovitAiPilot' + randomUUID().replaceAll('-', ''),
-    name = 'AndroidSynthetic' + randomUUID().slice(0, 6);
-  if (!account)
-    await post('/api/auth/sign-up/email', {
-      email,
-      password,
-      name,
-      callbackURL: 'biovitai://auth',
-    });
-  let verification;
-  for (const file of await fs.readdir('.local/auth-mailbox')) {
-    if (!file.endsWith('.json')) continue;
-    const item = JSON.parse(
-      await fs.readFile(path.join('.local/auth-mailbox', file), 'utf8'),
-    );
-    if (item.recipient === email && item.kind === 'verification')
-      verification = item.url;
-  }
-  if (!verification || new URL(verification).origin !== origin)
-    throw new Error('Synthetic verification capture unavailable');
-  await fetch(verification, { redirect: 'manual' });
-  if (!account) {
-    account = { email, password, purpose: 'synthetic test account only' };
-    await fs.writeFile(accountFile, JSON.stringify(account), {
-      mode: 0o600,
-      flag: 'wx',
-    });
-  }
-  await command(['shell', 'am', 'force-stop', 'com.biovitai.pilot']);
-  await command([
-    'shell',
-    'am',
-    'start',
-    '-W',
-    '-n',
-    'com.biovitai.pilot/.MainActivity',
-  ]);
-  await delay(1000);
-  let initial = [];
-  for (let attempt = 0; attempt < 20; attempt++) {
-    initial = await snapshot();
-    if (
-      initial.some((n) => matches(n, 'Sign out') || matches(n, 'Email address'))
-    )
-      break;
-    await delay(300);
-  }
-  let resumedSession = initial.some((n) => matches(n, 'Sign out'));
-  if (resumedSession) {
-    await navigate('Choose profile', 'Add or manage family profiles →');
-    resumedSession = (await snapshot()).some((n) =>
-      matches(n, 'Signed in as ' + email),
-    );
-    await tap('Close');
-    if (!resumedSession) await navigate('Sign out', 'Email address');
-  }
-  if (!resumedSession) {
-    await fill('Email address', email);
-    await fill('Password', password);
-    await navigate('Sign in', 'Choose profile');
-  }
-  await wait('Choose profile');
-  await record(
-    resumedSession
-      ? 'SecureStore session restored after cold launch'
-      : 'native authentication and SecureStore session',
-  );
-  if (process.argv.includes('--large-text-only')) {
-    await scrollTo('Upload report');
-    let upload = await wait('Upload report');
-    let bounds = upload.bounds.match(/\d+/g).map(Number);
-    if (bounds[3] - bounds[1] < 88) {
+async function main() {
+  try {
+    if (process.argv.includes('--large-text-only')) {
       await command([
         'shell',
-        'input',
-        'swipe',
-        '360',
-        '1000',
-        '360',
-        '800',
-        '300',
+        'settings',
+        'put',
+        'system',
+        'font_scale',
+        '1.5',
       ]);
-      upload = await wait('Upload report');
-      bounds = upload.bounds.match(/\d+/g).map(Number);
+      changedFont = true;
     }
-    if (bounds[0] < 0 || bounds[2] > 720 || bounds[3] - bounds[1] < 88)
-      throw Error('Native large-text action geometry failed');
-    await record(
-      'native 150 percent text retains visible profile controls and an accessible upload action',
-    );
-    await command(['shell', 'settings', 'put', 'system', 'font_scale', '1.0']);
-    changedFont = false;
-    process.exit(0);
-  }
-  if (process.argv.includes('--compare-only')) {
-    for (const file of ['SyntheticTrendOne.png', 'SyntheticTrendTwo.png']) {
-      await scrollTo('Select comparison report ' + file);
-      await tap('Select comparison report ' + file);
-    }
-    await scrollTo('Compare verified results');
-    await tap('Compare verified results');
-    await scrollTo('Results remain distinct; no averaging is applied.');
-    await wait('Results remain distinct; no averaging is applied.');
-    await record('native comparison of two generated verified sources');
-    await scrollTo(
-      'Approximate trend chart. Exact dates, values and sources follow below.',
-    );
-    await record(
-      'native comparable trend chart with exact source-linked values',
-    );
-    process.exit(0);
-  }
-  if (process.argv.includes('--caregiver-only')) {
-    await navigate('Choose profile', 'Caregiver Shared Synthetic · Family');
-    await tap('Caregiver Shared Synthetic · Family');
-    await scrollTo('Open report SharedCaregiverSynthetic.png');
-    await tap('Open report SharedCaregiverSynthetic.png');
-    await tap('View source page 1');
-    await wait('Original report source page');
-    await record('native caregiver reads an authorized verified source');
-    await execute(
-      process.execPath,
-      ['tools/seed-android-caregiver.mjs', '--revoke'],
-      { windowsHide: true, timeout: 30000, maxBuffer: 4096 },
-    );
-    await wait('Select a profile first.', 30000);
-    if (
-      (await snapshot()).some(
-        (n) =>
-          matches(n, 'Original report source page') ||
-          n.text?.includes('Caregiver Marker'),
-      )
-    )
-      throw Error('Revoked native evidence remained visible');
-    await record(
-      'native caregiver revocation clears report values and source image',
-    );
-    await tap('Back');
-    await navigate('Choose profile', 'Refresh profile access');
-    await tap('Refresh profile access');
-    const fixture = JSON.parse(
-      await fs.readFile(path.join(root, 'caregiver-fixture.json'), 'utf8'),
-    );
-    await navigate('Choose profile', fixture.restoreProfileName + ' · Family');
-    await tap(fixture.restoreProfileName + ' · Family');
-    await record(
-      'native owner profile restored after refreshing revoked access',
-    );
-    process.exit(0);
-  }
-  if (
-    !process.argv.includes('--continue-review') &&
-    !process.argv.includes('--continue-chat')
-  ) {
-    if (!process.argv.includes('--continue-upload')) {
-      await navigate('Choose profile', 'Add or manage family profiles →');
-      await navigate('Add or manage family profiles →', 'Family member name');
-      await fill('Family member name', name);
-      await navigate(
-        'Add family member',
-        'Family profile created. Select it using the profile picker.',
+    const accountFile = path.join(root, 'synthetic-rehearsal-account.json');
+    let account = await fs
+      .readFile(accountFile, 'utf8')
+      .then(JSON.parse)
+      .catch(() => null);
+    const email = account?.email ?? `android-${randomUUID()}@example.test`,
+      password =
+        account?.password ?? 'BiovitAiPilot' + randomUUID().replaceAll('-', ''),
+      name = 'AndroidSynthetic' + randomUUID().slice(0, 6);
+    if (!account)
+      await post('/api/auth/sign-up/email', {
+        email,
+        password,
+        name,
+        callbackURL: 'biovitai://auth',
+      });
+    let verification;
+    for (const file of await fs.readdir('.local/auth-mailbox')) {
+      if (!file.endsWith('.json')) continue;
+      const item = JSON.parse(
+        await fs.readFile(path.join('.local/auth-mailbox', file), 'utf8'),
       );
-      await tap('Choose profile');
-      await tap(name + ' · Family');
-      await tap('Back');
-      await record('email-less family creation and active profile selection');
-      await fs.writeFile(
-        path.join(root, 'native-profile.json'),
-        JSON.stringify({
-          purpose: 'native synthetic family created by rehearsal',
-          displayName: name,
-        }),
-      );
+      if (item.recipient === email && item.kind === 'verification')
+        verification = item.url;
     }
-    await scrollTo('Upload report');
-    const svg =
-        '<svg width="1200" height="400"><rect width="1200" height="400" fill="white"/><text x="40" y="80" font-family="Arial" font-size="36">Patient: Synthetic Subject</text><text x="40" y="170" font-family="Arial" font-size="36">Glucose 5.90 mmol/L</text></svg>',
-      file = path.join(root, 'BiovitAI_Synthetic_Pilot.png');
-    await sharp(Buffer.from(svg)).png().toFile(file);
-    await command([
-      'push',
-      file,
-      '/sdcard/Download/BiovitAI_Synthetic_Pilot.png',
-    ]);
+    if (!verification || new URL(verification).origin !== origin)
+      throw new Error('Synthetic verification capture unavailable');
+    if (!account)
+      await fetch(verification, {
+        redirect: 'manual',
+        signal: AbortSignal.timeout(10000),
+      });
+    if (!account) {
+      account = { email, password, purpose: 'synthetic test account only' };
+      await fs.writeFile(accountFile, JSON.stringify(account), {
+        mode: 0o600,
+        flag: 'wx',
+      });
+    }
+    console.log(
+      JSON.stringify({
+        event: 'android.rehearsal',
+        step: 'launching local pilot',
+      }),
+    );
+    await command(['shell', 'am', 'force-stop', 'com.biovitai.pilot']);
     await command([
       'shell',
       'am',
-      'broadcast',
-      '-a',
-      'android.intent.action.MEDIA_SCANNER_SCAN_FILE',
-      '-d',
-      'file:///sdcard/Download/BiovitAI_Synthetic_Pilot.png',
+      'start',
+      '-W',
+      '-n',
+      'com.biovitai.pilot/.MainActivity',
     ]);
-    await tap('Upload report');
     await delay(1000);
-    try {
-      await wait('BiovitAI_Synthetic_Pilot.png', 10000);
-    } catch {
-      await navigate('Show roots', 'Downloads');
-      await tap('Downloads');
+    let initial = [];
+    const launchDeadline = Date.now() + 180000;
+    while (Date.now() < launchDeadline) {
+      initial = await snapshot();
+      if (
+        initial.some(
+          (n) => matches(n, 'Sign out') || matches(n, 'Email address'),
+        )
+      )
+        break;
+      await delay(300);
     }
-    await tap('BiovitAI_Synthetic_Pilot.png');
-    await scrollTo(
-      'Uploaded. Scanning and extraction must finish before verification.',
-    );
-    await wait(
-      'Uploaded. Scanning and extraction must finish before verification.',
-      30000,
-    );
-    await record('native document picker and authenticated binary upload');
-  }
-  await scrollTo('Open report BiovitAI_Synthetic_Pilot.png');
-  await tap('Open report BiovitAI_Synthetic_Pilot.png');
-  if (!process.argv.includes('--continue-chat')) {
-    await wait('Identity confirmation reason', 180000);
-    await fill(
-      'Identity confirmation reason',
-      'CheckedSyntheticSourceForSelectedFamily',
-    );
-    await scrollTo('I checked the source and confirm this person');
-    await tap('I checked the source and confirm this person');
-    await wait('Saved.');
-    await scrollTo('Verification reason');
-    await fill('Verification reason', 'CheckedOriginalSyntheticResult');
-    await scrollTo('Verify result');
-    await tap('Verify result');
-    await top();
-    await wait('verified · identity matched');
+    let resumedSession = initial.some((n) => matches(n, 'Sign out'));
+    if (resumedSession) {
+      await navigate('Choose profile', 'Add or manage family profiles →');
+      resumedSession = (await snapshot()).some((n) =>
+        matches(n, 'Signed in as ' + email),
+      );
+      await tap('Close');
+      if (!resumedSession) await navigate('Sign out', 'Email address');
+    }
+    if (!resumedSession) {
+      await fill('Email address', email);
+      await fill('Password', password);
+      await navigate('Sign in', 'Choose profile');
+    }
+    await wait('Choose profile');
     await record(
-      'native identity confirmation and verified observation publication',
+      resumedSession
+        ? 'SecureStore session restored after cold launch'
+        : 'native authentication and SecureStore session',
     );
-  }
-  await top();
-  await tap('View source page 1');
-  await wait('Original report source page');
-  await record('native source-page navigation');
-  await tap('Back');
-  await top();
-  await tap('✳ Health assistant');
-  await tap('Allow AI processing for this profile');
-  await wait('Consent recorded.');
-  await scrollTo('Ask about verified health evidence');
-  await fill(
-    'Ask about verified health evidence',
-    'ExplainVerifiedSyntheticEvidence',
-  );
-  await scrollTo('Ask AI');
-  await tap('Ask AI');
-  await scrollTo('AI unavailable: PROVIDER_NOT_CONFIGURED');
-  await wait('AI unavailable: PROVIDER_NOT_CONFIGURED');
-  await top();
-  await scrollTo('Withdraw AI consent');
-  await tap('Withdraw AI consent');
-  await wait('AI access requires current permission and health AI consent.');
-  await record(
-    'native chat consent, honest unconfigured provider and withdrawal',
-  );
-  await fs.writeFile(
-    path.join(root, 'rehearsal.json'),
-    JSON.stringify(
-      {
-        kind: 'automated synthetic rehearsal',
-        steps,
-        status:
-          'Selected native phase passed. Recorded steps define this run; comparison, caregiver and large-text runs have separate records.',
-      },
-      null,
-      2,
-    ),
-  );
-} catch (error) {
-  if (changedFont)
-    await command(['shell', 'settings', 'put', 'system', 'font_scale', '1.0']);
-  if (
-    error &&
-    typeof error === 'object' &&
-    error.code === 'ERR_CHILD_PROCESS_STDIO_MAXBUFFER'
-  )
+    if (process.argv.includes('--supporting-only')) {
+      const evidence = path.resolve('documentation/design-system/evidence');
+      await fs.mkdir(evidence, { recursive: true });
+      async function capture(name) {
+        await command([
+          'shell',
+          'screencap',
+          '-p',
+          '/sdcard/bioflow-review.png',
+        ]);
+        await command([
+          'pull',
+          '/sdcard/bioflow-review.png',
+          path.join(evidence, name + '.png'),
+        ]);
+      }
+      await navigate('My Wellness', 'Make room for feeling well.');
+      await capture('android-wellness');
+      await navigate('Community & Trends', 'A wider perspective.');
+      await capture('android-community');
+      await navigate('My Health', 'Health evidence');
+      await top();
+      await navigate(
+        '✳ Health assistant',
+        'Ask about verified health evidence',
+      );
+      await capture('android-chat');
+      await tap('Back');
+      await navigate('Sign out', 'Email address');
+      await capture('android-auth');
+      await navigate('Create account', 'Your name');
+      await capture('android-signup');
+      await tap('Back to sign in');
+      await navigate('Forgot password?', 'Send reset link');
+      await capture('android-recovery');
+      await tap('Back to sign in');
+      await fill('Email address', email);
+      await fill('Password', password);
+      await navigate('Sign in', 'Choose profile');
+      await record(
+        'BioFlow native Wellness/Community, chat, auth mode rendering, signout and fresh sign-in',
+      );
+      return;
+    }
+    if (process.argv.includes('--bioflow-only')) {
+      const evidence = path.resolve('documentation/design-system/evidence');
+      await fs.mkdir(evidence, { recursive: true });
+      async function capture(name) {
+        await command([
+          'shell',
+          'screencap',
+          '-p',
+          '/sdcard/bioflow-review.png',
+        ]);
+        await command([
+          'pull',
+          '/sdcard/bioflow-review.png',
+          path.join(evidence, name + '.png'),
+        ]);
+      }
+      await top();
+      await capture('android-health');
+      await scrollTo('Labs & Reports');
+      await navigate('Labs & Reports', 'Upload report');
+      await capture('android-reports');
+      await tap('Back');
+      await scrollTo('Insights');
+      await navigate('Insights', 'Search biomarkers');
+      await capture('android-insights');
+      await tap('Back');
+      await scrollTo('Heart: not assessed. Open evidence details');
+      await navigate(
+        'Heart: not assessed. Open evidence details',
+        'Close evidence details',
+      );
+      await capture('android-organ-details');
+      await tap('Close evidence details');
+      await record(
+        'BioFlow Reports and Insights stack routes, body evidence modal and back navigation',
+      );
+      return;
+    }
+    if (process.argv.includes('--large-text-only')) {
+      await scrollTo('Upload report');
+      let upload = await wait('Upload report');
+      let bounds = upload.bounds.match(/\d+/g).map(Number);
+      if (bounds[3] - bounds[1] < 88) {
+        await command([
+          'shell',
+          'input',
+          'swipe',
+          '360',
+          '1000',
+          '360',
+          '800',
+          '300',
+        ]);
+        upload = await wait('Upload report');
+        bounds = upload.bounds.match(/\d+/g).map(Number);
+      }
+      if (bounds[0] < 0 || bounds[2] > 720 || bounds[3] - bounds[1] < 88)
+        throw Error('Native large-text action geometry failed');
+      await record(
+        'native 150 percent text retains visible profile controls and an accessible upload action',
+      );
+      await command([
+        'shell',
+        'settings',
+        'put',
+        'system',
+        'font_scale',
+        '1.0',
+      ]);
+      changedFont = false;
+      return;
+    }
+    if (process.argv.includes('--compare-only')) {
+      for (const file of ['SyntheticTrendOne.png', 'SyntheticTrendTwo.png']) {
+        await scrollTo('Select comparison report ' + file);
+        await tap('Select comparison report ' + file);
+      }
+      await scrollTo('Compare verified results');
+      await tap('Compare verified results');
+      await scrollTo('Results remain distinct; no averaging is applied.');
+      await wait('Results remain distinct; no averaging is applied.');
+      await record('native comparison of two generated verified sources');
+      await scrollTo(
+        'Approximate trend chart. Exact dates, values and sources follow below.',
+      );
+      await record(
+        'native comparable trend chart with exact source-linked values',
+      );
+      return;
+    }
+    if (process.argv.includes('--caregiver-only')) {
+      await navigate('Choose profile', 'Caregiver Shared Synthetic · Family');
+      await tap('Caregiver Shared Synthetic · Family');
+      await scrollTo('Open report SharedCaregiverSynthetic.png');
+      await tap('Open report SharedCaregiverSynthetic.png');
+      await tap('View source page 1');
+      await wait('Original report source page');
+      await record('native caregiver reads an authorized verified source');
+      await execute(
+        process.execPath,
+        ['tools/seed-android-caregiver.mjs', '--revoke'],
+        { windowsHide: true, timeout: 30000, maxBuffer: 4096 },
+      );
+      await wait('Select a profile first.', 30000);
+      if (
+        (await snapshot()).some(
+          (n) =>
+            matches(n, 'Original report source page') ||
+            n.text?.includes('Caregiver Marker'),
+        )
+      )
+        throw Error('Revoked native evidence remained visible');
+      await record(
+        'native caregiver revocation clears report values and source image',
+      );
+      await tap('Back');
+      await navigate('Choose profile', 'Refresh profile access');
+      await tap('Refresh profile access');
+      const fixture = JSON.parse(
+        await fs.readFile(path.join(root, 'caregiver-fixture.json'), 'utf8'),
+      );
+      await navigate(
+        'Choose profile',
+        fixture.restoreProfileName + ' · Family',
+      );
+      await tap(fixture.restoreProfileName + ' · Family');
+      await record(
+        'native owner profile restored after refreshing revoked access',
+      );
+      return;
+    }
+    if (
+      !process.argv.includes('--continue-review') &&
+      !process.argv.includes('--continue-verify') &&
+      !process.argv.includes('--continue-chat')
+    ) {
+      if (!process.argv.includes('--continue-upload')) {
+        await navigate('Choose profile', 'Add or manage family profiles →');
+        await navigate('Add or manage family profiles →', 'Family member name');
+        await fill('Family member name', name);
+        await navigate(
+          'Add family member',
+          'Family profile created. Select it using the profile picker.',
+        );
+        await tap('Choose profile');
+        await tap(name + ' · Family');
+        await tap('Back');
+        await record('email-less family creation and active profile selection');
+        await fs.writeFile(
+          path.join(root, 'native-profile.json'),
+          JSON.stringify({
+            purpose: 'native synthetic family created by rehearsal',
+            displayName: name,
+          }),
+        );
+      }
+      await scrollTo('Upload report');
+      const svg =
+          '<svg width="1200" height="400"><rect width="1200" height="400" fill="white"/><text x="40" y="80" font-family="Arial" font-size="36">Patient: Synthetic Subject</text><text x="40" y="170" font-family="Arial" font-size="36">Glucose 5.90 mmol/L</text></svg>',
+        file = path.join(root, 'BiovitAI_Synthetic_Pilot.png');
+      await sharp(Buffer.from(svg)).png().toFile(file);
+      await command([
+        'push',
+        file,
+        '/sdcard/Download/BiovitAI_Synthetic_Pilot.png',
+      ]);
+      await command([
+        'shell',
+        'am',
+        'broadcast',
+        '-a',
+        'android.intent.action.MEDIA_SCANNER_SCAN_FILE',
+        '-d',
+        'file:///sdcard/Download/BiovitAI_Synthetic_Pilot.png',
+      ]);
+      await tap('Upload report');
+      await delay(1000);
+      try {
+        await wait('BiovitAI_Synthetic_Pilot.png', 10000);
+      } catch {
+        await navigate('Show roots', 'Downloads');
+        await tap('Downloads');
+      }
+      await tap('BiovitAI_Synthetic_Pilot.png');
+      await scrollTo(
+        'Uploaded. Scanning and extraction must finish before verification.',
+      );
+      await wait(
+        'Uploaded. Scanning and extraction must finish before verification.',
+        30000,
+      );
+      await record('native document picker and authenticated binary upload');
+    }
+    await scrollTo('Open report BiovitAI_Synthetic_Pilot.png');
+    await tap('Open report BiovitAI_Synthetic_Pilot.png');
+    if (
+      !process.argv.includes('--continue-chat') &&
+      !process.argv.includes('--continue-verify')
+    ) {
+      await wait('Identity confirmation reason', 180000);
+      await fill(
+        'Identity confirmation reason',
+        'CheckedSyntheticSourceForSelectedFamily',
+      );
+      await scrollTo('I checked the source and confirm this person');
+      await tap('I checked the source and confirm this person');
+      await top();
+      await wait('review_needed · identity matched');
+    }
+    if (!process.argv.includes('--continue-chat')) {
+      await scrollTo('Verification reason');
+      await fill('Verification reason', 'CheckedOriginalSyntheticResult');
+      await scrollTo('Verify result');
+      await tap('Verify result');
+      await top();
+      await wait('verified · identity matched');
+      await record(
+        'native identity confirmation and verified observation publication',
+      );
+    }
+    await top();
+    await tap('View source page 1');
+    await wait('Original report source page');
+    await record('native source-page navigation');
+    await tap('Back');
+    await top();
+    await tap('✳ Health assistant');
+    await scrollTo('Allow AI processing for this profile');
+    await tap('Allow AI processing for this profile');
+    await scrollTo('Consent recorded.');
+    await wait('Consent recorded.');
+    await scrollTo('Ask about verified health evidence');
+    await fill(
+      'Ask about verified health evidence',
+      'ExplainVerifiedSyntheticEvidence',
+    );
+    await scrollTo('Ask AI');
+    await tap('Ask AI');
+    await scrollTo('AI unavailable: PROVIDER_NOT_CONFIGURED');
+    await wait('AI unavailable: PROVIDER_NOT_CONFIGURED');
+    await top();
+    await scrollTo('Withdraw AI consent');
+    await tap('Withdraw AI consent');
+    await wait('AI access requires current permission and health AI consent.');
+    await record(
+      'native chat consent, honest unconfigured provider and withdrawal',
+    );
+    await fs.writeFile(
+      path.join(root, 'rehearsal.json'),
+      JSON.stringify(
+        {
+          kind: 'automated synthetic rehearsal',
+          steps,
+          status:
+            'Selected native phase passed. Recorded steps define this run; comparison, caregiver and large-text runs have separate records.',
+        },
+        null,
+        2,
+      ),
+    );
+  } catch (error) {
+    if (changedFont)
+      await command([
+        'shell',
+        'settings',
+        'put',
+        'system',
+        'font_scale',
+        '1.0',
+      ]);
+    if (
+      error &&
+      typeof error === 'object' &&
+      error.code === 'ERR_CHILD_PROCESS_STDIO_MAXBUFFER'
+    )
+      console.log(
+        JSON.stringify({
+          event: 'android.harness_output_limit',
+          stdoutBytes: error.stdout?.length,
+          stderrBytes: error.stderr?.length,
+          xmlHeaders:
+            typeof error.stdout === 'string'
+              ? error.stdout.split('<?xml').length - 1
+              : 0,
+        }),
+      );
     console.log(
       JSON.stringify({
-        event: 'android.harness_output_limit',
-        stdoutBytes: error.stdout?.length,
-        stderrBytes: error.stderr?.length,
-        xmlHeaders:
-          typeof error.stdout === 'string'
-            ? error.stdout.split('<?xml').length - 1
-            : 0,
+        event: 'android.rehearsal_failure_location',
+        command: lastCommand,
+        control: lastControl,
+        code:
+          error && typeof error === 'object' && 'code' in error
+            ? error.code
+            : 'ASSERTION',
+        type: error instanceof Error ? error.name : 'unknown',
       }),
     );
-  console.log(
-    JSON.stringify({
-      event: 'android.rehearsal_failure_location',
-      command: lastCommand,
-      control: lastControl,
-      code:
-        error && typeof error === 'object' && 'code' in error
-          ? error.code
-          : 'ASSERTION',
-      type: error instanceof Error ? error.name : 'unknown',
-    }),
-  );
-  if (
-    error instanceof Error &&
-    /^(Synthetic account setup failed: \d+|Expected native input did not receive focus|Unsafe test input)$/.test(
-      error.message,
+    if (
+      error instanceof Error &&
+      /^(Synthetic account setup failed: \d+|Expected native input did not receive focus|Unsafe test input)$/.test(
+        error.message,
+      )
     )
-  )
-    console.log(
-      JSON.stringify({ event: 'android.rehearsal_error', code: error.message }),
-    );
-  await record('failed; inspect private local UI snapshot');
-  process.exitCode = 1;
+      console.log(
+        JSON.stringify({
+          event: 'android.rehearsal_error',
+          code: error.message,
+        }),
+      );
+    await record('failed; inspect private local UI snapshot');
+    process.exitCode = 1;
+  }
 }
+await main();

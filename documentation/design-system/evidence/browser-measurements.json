@@ -1,0 +1,50 @@
+{
+  "environment": "Local Windows Chromium development server, single synthetic run; screenshot and axe work included in readinessMs; no production performance or baseline speed claim",
+  "measured": [
+    {
+      "route": "dashboard",
+      "readinessMs": 2355,
+      "violations": [],
+      "navigation": {
+        "responseMs": 47,
+        "domContentLoadedMs": 67
+      }
+    },
+    {
+      "route": "reports",
+      "readinessMs": 2018,
+      "violations": [],
+      "navigation": {
+        "responseMs": 64,
+        "domContentLoadedMs": 86
+      }
+    },
+    {
+      "route": "insights",
+      "readinessMs": 2358,
+      "violations": [],
+      "navigation": {
+        "responseMs": 44,
+        "domContentLoadedMs": 81
+      }
+    },
+    {
+      "route": "wellness",
+      "readinessMs": 1768,
+      "violations": [],
+      "navigation": {
+        "responseMs": 50,
+        "domContentLoadedMs": 74
+      }
+    },
+    {
+      "route": "community",
+      "readinessMs": 1782,
+      "violations": [],
+      "navigation": {
+        "responseMs": 54,
+        "domContentLoadedMs": 71
+      }
+    }
+  ]
+}

@@ -39,9 +39,11 @@ function message(error: unknown) {
 export function ReportCenter({
   profile,
   guard,
+  mode = 'all',
 }: {
   profile: PublicProfile;
   guard: ReturnType<typeof createProfileView>;
+  mode?: 'all' | 'reports' | 'insights';
 }) {
   const [reports, setReports] = useState<Ingestion[]>([]),
     [detail, setDetail] = useState<ReportDetail | null>(null);
@@ -201,39 +203,48 @@ export function ReportCenter({
         <h2>Your health overview</h2>
         <span className="muted">For {profile.displayName}</span>
       </div>
-      <HealthIntelligence
-        key={reports.map((r) => `${r.id}:${r.revision}`).join(',')}
-        guard={guard}
-        onSource={(id) => void open(id)}
-        revision={reports.map((r) => `${r.id}:${r.revision}`).join(',')}
-      />
-      <section className="card upload-card">
-        <h2>Add a report</h2>
-        <p className="muted">
-          PDF or image · up to 20 MiB and 50 pages. Use synthetic reports in
-          this local pilot.
-        </p>
-        <form onSubmit={upload} className="contact-form">
-          <label>
-            Report file
-            <input
-              type="file"
-              name="report"
-              required
-              accept=".pdf,.png,.jpg,.jpeg,.tif,.tiff,.webp"
-              disabled={busy}
-              onChange={() => {
-                uploadKey.current = null;
-              }}
-            />
-          </label>
-          <button className="primary" disabled={busy}>
-            {busy ? 'Please wait…' : 'Upload report'}
-          </button>
-        </form>
-      </section>
+      {mode !== 'reports' && (
+        <HealthIntelligence
+          key={
+            'intelligence:' +
+            reports.map((r) => `${r.id}:${r.revision}`).join(',')
+          }
+          guard={guard}
+          onSource={(id) => void open(id)}
+          revision={reports.map((r) => `${r.id}:${r.revision}`).join(',')}
+        />
+      )}
+      {mode !== 'insights' && (
+        <section className="card upload-card" id="upload">
+          <h2>Add a report</h2>
+          <p className="muted">
+            PDF or image · up to 20 MiB and 50 pages. Use synthetic reports in
+            this local pilot.
+          </p>
+          <form onSubmit={upload} className="contact-form">
+            <label>
+              Report file
+              <input
+                type="file"
+                name="report"
+                required
+                accept=".pdf,.png,.jpg,.jpeg,.tif,.tiff,.webp"
+                disabled={busy}
+                onChange={() => {
+                  uploadKey.current = null;
+                }}
+              />
+            </label>
+            <button className="primary" disabled={busy}>
+              {busy ? 'Please wait…' : 'Upload report'}
+            </button>
+          </form>
+        </section>
+      )}
       <ReportComparison
-        key={reports.map((r) => `${r.id}:${r.revision}`).join(',')}
+        key={
+          'comparison:' + reports.map((r) => `${r.id}:${r.revision}`).join(',')
+        }
         guard={guard}
         reports={reports}
         onSource={(id) => void open(id)}
@@ -243,7 +254,7 @@ export function ReportCenter({
           {error}
         </p>
       )}
-      {loading ? (
+      {mode === 'insights' ? null : loading ? (
         <p role="status">Loading reports…</p>
       ) : !reports.length ? (
         <section className="card empty">
@@ -417,7 +428,7 @@ export function ReportCenter({
                           style={{
                             position: 'absolute',
                             pointerEvents: 'none',
-                            border: '2px solid #27614e',
+                            border: '2px solid var(--bf-teal)',
                             left: `${Number(c.x0) * 100}%`,
                             top: `${Number(c.y0) * 100}%`,
                             width: `${(Number(c.x1) - Number(c.x0)) * 100}%`,

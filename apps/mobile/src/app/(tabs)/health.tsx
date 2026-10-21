@@ -1,19 +1,24 @@
+import { BioText as Text, theme } from '../../design-system';
 import { Action as Pressable } from '../../action';
 import { useEffect, useState } from 'react';
-import { ScrollView, Text, View, StyleSheet } from 'react-native';
+import { ScrollView, View, StyleSheet } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import { router } from 'expo-router';
 import { randomUUID } from 'expo-crypto';
 import { z } from 'zod';
 import { IngestionSchema } from '../../../../../shared/contracts/src/reports';
-import { useSession } from '../../session';
+import { useSession, requestProfile } from '../../session';
 import { nativeApi, uploadReport, NativeRequestError } from '../../api';
 import { Evidence } from '../../evidence';
-export default function Health() {
+import { NativeOverview } from '../../overview';
+export default function Health({
+  reportsOnly = false,
+}: { reportsOnly?: boolean } = {}) {
   const session = useSession();
   return session.context.profile ? (
     <Reports
       key={`${session.context.profile.id}:${session.context.revision}`}
+      reportsOnly={reportsOnly}
     />
   ) : (
     <Text style={{ padding: 25 }}>
@@ -21,13 +26,15 @@ export default function Health() {
     </Text>
   );
 }
-function Reports() {
+function Reports({ reportsOnly = false }: { reportsOnly?: boolean }) {
   const { guard, context, externalPicker } = useSession(),
     [reports, setReports] = useState<z.infer<typeof IngestionSchema>[]>([]),
     [message, setMessage] = useState(''),
-    [busy, setBusy] = useState(false);
+    [busy, setBusy] = useState(false),
+    [loading, setLoading] = useState(true);
   async function load() {
-    const ticket = guard.request();
+    const ticket = requestProfile(guard);
+    if (!ticket) return;
     try {
       const data = await nativeApi(
         '/v1/health/reports',
@@ -35,9 +42,10 @@ function Reports() {
         ticket.context,
         ticket.signal,
       );
-      guard.publish(ticket, () =>
-        setReports(z.array(IngestionSchema).parse(data.reports)),
-      );
+      guard.publish(ticket, () => {
+        setReports(z.array(IngestionSchema).parse(data.reports));
+        setLoading(false);
+      });
     } catch (error) {
       if (
         error instanceof NativeRequestError &&
@@ -55,8 +63,9 @@ function Reports() {
     return () => clearInterval(timer);
   }, []);
   async function upload() {
+    const ticket = requestProfile(guard);
+    if (!ticket) return;
     setBusy(true);
-    const ticket = guard.request();
     try {
       const picked = await externalPicker(() =>
         DocumentPicker.getDocumentAsync({
@@ -106,6 +115,12 @@ function Reports() {
       >
         <Text>✳ Health assistant</Text>
       </Pressable>
+      {!reportsOnly &&
+        (loading ? (
+          <Text accessibilityLiveRegion="polite">Loading health overview…</Text>
+        ) : (
+          <NativeOverview reports={reports} />
+        ))}
       <Text>Reports for {context.profile?.displayName}</Text>
       <Text style={s.note}>
         Only verified results become health evidence. No organ scores or
@@ -124,7 +139,7 @@ function Reports() {
       <Pressable style={s.button} onPress={() => void load()}>
         <Text style={s.white}>Refresh</Text>
       </Pressable>
-      {!reports.length && <Text>Your reports will live here.</Text>}
+      {!loading && !reports.length && <Text>Your reports will live here.</Text>}
       {reports.map((report) => (
         <Pressable
           accessibilityRole="button"
@@ -142,11 +157,13 @@ function Reports() {
           {report.errorCode && <Text>{report.errorCode}</Text>}
         </Pressable>
       ))}
-      <Evidence
-        key={reports.map((r) => `${r.id}:${r.revision}`).join(',')}
-        reports={reports}
-        revision={reports.map((r) => `${r.id}:${r.revision}`).join(',')}
-      />
+      {!reportsOnly && (
+        <Evidence
+          key={reports.map((r) => `${r.id}:${r.revision}`).join(',')}
+          reports={reports}
+          revision={reports.map((r) => `${r.id}:${r.revision}`).join(',')}
+        />
+      )}
       <View style={s.card}>
         <Text style={s.name}>Organ evidence</Text>
         {['Heart', 'Liver', 'Kidneys', 'Thyroid', 'Metabolic'].map((name) => (
@@ -159,18 +176,22 @@ function Reports() {
   );
 }
 const s = StyleSheet.create({
-  page: { padding: 22, gap: 16, backgroundColor: '#f7f8f3' },
-  title: { fontSize: 30, color: '#254e3e' },
-  name: { fontSize: 18, fontWeight: '600', color: '#254e3e' },
-  note: { color: '#61715d', lineHeight: 22 },
-  button: { padding: 15, backgroundColor: '#27614e', borderRadius: 8 },
-  white: { color: 'white', fontSize: 16 },
+  page: { padding: 22, gap: 16, backgroundColor: theme.color.canvas },
+  title: { fontSize: 30, color: theme.color.ink },
+  name: { fontSize: 18, fontWeight: '600', color: theme.color.ink },
+  note: { color: theme.color.slate, lineHeight: 22 },
+  button: {
+    padding: 15,
+    backgroundColor: theme.color.teal,
+    borderRadius: theme.radius.control,
+  },
+  white: { color: theme.color.white, fontSize: 16 },
   card: {
     padding: 18,
     borderWidth: 1,
-    borderColor: '#d8e2d2',
-    backgroundColor: 'white',
-    borderRadius: 10,
+    borderColor: theme.color.border,
+    backgroundColor: theme.color.white,
+    borderRadius: theme.radius.card,
     gap: 8,
   },
 });

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
 import Link from 'next/link';
 import { api, friendlyError } from './api';
+import { BioFlowBackground, Brand } from './design-system';
 
 type Mode = 'signin' | 'signup' | 'forgot' | 'reset' | 'verify';
 const titles: Record<Mode, string> = {
@@ -18,7 +19,9 @@ export function AuthScreen() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [ready, setReady] = useState(false);
   useEffect(() => {
+    setReady(true);
     const params = new URLSearchParams(window.location.search);
     const resetToken = params.get('token');
     if (resetToken) {
@@ -45,7 +48,7 @@ export function AuthScreen() {
     try {
       if (mode === 'signin') {
         await api('/api/auth/sign-in/email', { email, password });
-        window.location.assign('/health');
+        window.location.assign('/dashboard');
       } else if (mode === 'signup') {
         await api('/api/auth/sign-up/email', {
           email,
@@ -85,9 +88,10 @@ export function AuthScreen() {
   }
   return (
     <main className="auth-layout">
+      <BioFlowBackground />
       <section className="auth-story">
-        <Link className="brand" href="/">
-          bio<span>vit</span>ai<span className="brand-dot">✳</span>
+        <Link href="/" aria-label="BiovitAI home">
+          <Brand />
         </Link>
         <div>
           <p className="eyebrow">YOUR HEALTH, CONNECTED</p>
@@ -163,7 +167,7 @@ export function AuthScreen() {
                 {message}
               </p>
             )}
-            <button className="primary full" disabled={busy}>
+            <button className="primary full" disabled={!ready || busy}>
               {busy
                 ? 'Please wait…'
                 : {
@@ -178,18 +182,20 @@ export function AuthScreen() {
           <div className="auth-actions">
             {mode === 'signin' ? (
               <>
-                <button onClick={() => change('forgot')}>
+                <button disabled={!ready} onClick={() => change('forgot')}>
                   Forgot password?
                 </button>
-                <button onClick={() => change('signup')}>
+                <button disabled={!ready} onClick={() => change('signup')}>
                   Create an account
                 </button>
-                <button onClick={() => change('verify')}>
+                <button disabled={!ready} onClick={() => change('verify')}>
                   Resend verification
                 </button>
               </>
             ) : (
-              <button onClick={() => change('signin')}>Back to sign in</button>
+              <button disabled={!ready} onClick={() => change('signin')}>
+                Back to sign in
+              </button>
             )}
           </div>
           <p className="local-note">

@@ -142,6 +142,14 @@ test('real local upload, source verification, comparison and unconfigured AI jou
       page.getByRole('button', { name: new RegExp(`${name}.*verified`) }),
     ).toBeVisible();
   }
+  const correction = page.locator('.candidate-review').first();
+  await correction
+    .getByLabel('Verification or correction reason')
+    .fill('Rechecked the synthetic source without changing its exact value');
+  await correction
+    .getByRole('button', { name: 'Save corrected revision' })
+    .click();
+  await expect(page.locator('.history')).toContainText('revision 2');
   const comparison = page
     .getByRole('heading', { name: 'Compare reports', exact: true })
     .locator('..');
@@ -157,7 +165,39 @@ test('real local upload, source verification, comparison and unconfigured AI jou
   await expect(comparison.getByText(/15.50 mg\/L/)).toBeVisible();
   await expect(comparison.getByText(/20.50 mg\/L/)).toBeVisible();
   await expect(
-    page.getByRole('img', { name: /Synthetic Marker trend/ }),
+    page.getByRole('img', { name: /Synthetic Marker trend/ }).first(),
+  ).toBeVisible();
+  await page.getByRole('link', { name: 'Dashboard', exact: true }).click();
+  await expect(page).toHaveURL(/\/dashboard$/);
+  await expect(page.locator('.metric-grid')).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Your body insights', exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByText('Wellness goal progress', { exact: true }),
+  ).toBeVisible();
+  await page.getByRole('button', { name: /Synthetic Marker.*20.50/ }).click();
+  await expect(page.getByRole('dialog')).toContainText(
+    'Distinct results ordered',
+  );
+  await expect(
+    page.getByRole('dialog').getByRole('link', { name: /Why this value/ }),
+  ).toHaveCount(2);
+  await page.keyboard.press('Escape');
+  await page
+    .getByRole('button', {
+      name: 'Heart: not assessed. Open evidence details',
+      exact: true,
+    })
+    .click();
+  await expect(page.getByRole('dialog')).toContainText(
+    'No approved organ interpretation',
+  );
+  await page.keyboard.press('Escape');
+  await page.getByRole('link', { name: 'My Health', exact: true }).click();
+  await expect(page).toHaveURL(/\/health$/);
+  await expect(
+    page.getByRole('heading', { name: 'My Health', exact: true }),
   ).toBeVisible();
   await page.getByRole('button', { name: /Health assistant/ }).click();
   await page
@@ -196,7 +236,7 @@ test('real local upload, source verification, comparison and unconfigured AI jou
     document.documentElement.style.fontSize = '150%';
   });
   await expect(
-    page.getByRole('img', { name: /Synthetic Marker trend/ }),
+    page.getByRole('img', { name: /Synthetic Marker trend/ }).first(),
   ).toBeVisible();
   expect(
     await page.evaluate(
@@ -242,9 +282,7 @@ test('account screens, family profiles, context switching, tabs and password rec
   await page.getByLabel('Email address').fill(email);
   await page.getByLabel('Password', { exact: true }).fill(password);
   await page.getByRole('button', { name: 'Sign in →' }).click();
-  await expect(
-    page.getByRole('heading', { name: 'Your health, in view.' }),
-  ).toBeVisible();
+  await expect(page.getByLabel('Current profile')).toBeVisible();
   await page.getByRole('button', { name: 'Add a profile →' }).click();
   await page.getByLabel('Profile name', { exact: true }).fill('Pilot Member A');
   await page.getByLabel('Profile type').selectOption('family');
@@ -259,6 +297,7 @@ test('account screens, family profiles, context switching, tabs and password rec
   await expect(
     picker.getByRole('option', { name: 'Pilot Member B · Family' }),
   ).toBeAttached();
+  await page.getByRole('button', { name: 'Close panel', exact: true }).click();
   await picker.selectOption({ label: 'Pilot Member A · Family' });
   await expect(page.getByLabel('Current profile')).toContainText(
     'Pilot Member A',
@@ -277,7 +316,10 @@ test('account screens, family profiles, context switching, tabs and password rec
     if (route.request().method() === 'POST') await selectionGate;
     await route.continue();
   });
-  await picker.selectOption({ label: 'Pilot Member B · Family' });
+  await picker.selectOption(
+    { label: 'Pilot Member B · Family' },
+    { force: true },
+  );
   await expect(
     page.getByRole('heading', { name: 'Here for Pilot Member A' }),
   ).toHaveCount(0);
@@ -297,16 +339,17 @@ test('account screens, family profiles, context switching, tabs and password rec
     .fill('synthetic-member@example.test');
   await page.getByRole('button', { name: 'Save contact email' }).click();
   await expect(page.getByRole('status')).toContainText('Contact email saved');
+  await page.getByRole('button', { name: 'Close panel', exact: true }).click();
   await page.getByRole('link', { name: 'My Wellness' }).click();
   await expect(
-    page.getByRole('heading', { name: 'Make room for feeling well.' }),
+    page.getByRole('heading', { name: 'My Wellness', exact: true }),
   ).toBeVisible();
   await expect(page.getByLabel('Current profile')).toContainText(
     'Pilot Member B',
   );
   await page.getByRole('link', { name: 'Community & Trends' }).click();
   await expect(
-    page.getByRole('heading', { name: 'A wider perspective.' }),
+    page.getByRole('heading', { name: 'Community & Trends', exact: true }),
   ).toBeVisible();
   await expect(
     page.getByText('Read-only pilot', { exact: true }),
@@ -334,9 +377,11 @@ test('account screens, family profiles, context switching, tabs and password rec
     fullPage: true,
   });
   await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole('button', { name: 'Open navigation' }).click();
   await expect(
     page.getByRole('link', { name: 'My Health', exact: true }),
   ).toBeVisible();
+  await page.getByRole('button', { name: 'Close panel', exact: true }).click();
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= window.innerWidth,
@@ -349,6 +394,9 @@ test('account screens, family profiles, context switching, tabs and password rec
     ),
     fullPage: true,
   });
+  await page
+    .getByRole('button', { name: 'Manage profiles', exact: true })
+    .click();
   await page.getByRole('button', { name: 'Sign out', exact: true }).click();
   await expect(
     page.getByRole('heading', { name: 'Welcome back.' }),

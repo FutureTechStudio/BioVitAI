@@ -1,6 +1,7 @@
+import { BioText as Text, theme } from '../design-system';
 import { Action as Pressable, Field as TextInput } from '../action';
 import { useEffect, useState, useRef } from 'react';
-import { ScrollView, Text, Image, View } from 'react-native';
+import { ScrollView, Image, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { randomUUID } from 'expo-crypto';
 import {
@@ -10,7 +11,7 @@ import {
 } from '../../../../shared/contracts/src/reports';
 import { z } from 'zod';
 import { router } from 'expo-router';
-import { useSession } from '../session';
+import { useSession, requestProfile } from '../session';
 import { nativeApi, previewPage, NativeRequestError } from '../api';
 export default function Report() {
   const session = useSession(),
@@ -30,14 +31,17 @@ function Review({ id }: { id: string }) {
     [message, setMessage] = useState(''),
     [reason, setReason] = useState(''),
     [image, setImage] = useState(''),
+    [previewNumber, setPreviewNumber] = useState(1),
     [reports, setReports] = useState<z.infer<typeof IngestionSchema>[]>([]),
     [related, setRelated] = useState(''),
     [relation, setRelation] = useState<'rerun' | 'amendment'>('rerun'),
     [relationReason, setRelationReason] = useState(''),
     [busy, setBusy] = useState(false);
   const imageRevision = useRef(0);
+  const sourcePage = detail?.pages.find((p) => p.number === previewNumber);
   async function load() {
-    const ticket = guard.request();
+    const ticket = requestProfile(guard);
+    if (!ticket) return;
     try {
       const data = ReportDetailSchema.parse(
         await nativeApi(
@@ -80,7 +84,8 @@ function Review({ id }: { id: string }) {
   }, [id]);
   async function action(route: string, fields: Record<string, unknown> = {}) {
     if (!detail) return;
-    const ticket = guard.request();
+    const ticket = requestProfile(guard);
+    if (!ticket) return;
     setBusy(true);
     try {
       await nativeApi(
@@ -107,12 +112,16 @@ function Review({ id }: { id: string }) {
   }
   async function page(number: number) {
     const revision = ++imageRevision.current;
-    const ticket = guard.request();
+    const ticket = requestProfile(guard);
+    if (!ticket) return;
     setImage('');
     try {
       const uri = await previewPage(id, number, ticket.context, ticket.signal);
       if (revision === imageRevision.current)
-        guard.publish(ticket, () => setImage(uri));
+        guard.publish(ticket, () => {
+          setPreviewNumber(number);
+          setImage(uri);
+        });
     } catch {
       guard.publish(ticket, () => setMessage('Source unavailable.'));
     }
@@ -173,13 +182,38 @@ function Review({ id }: { id: string }) {
               <Text>View source page {p.number}</Text>
             </Pressable>
           ))}
-          {!!image && (
-            <Image
-              source={{ uri: image }}
-              style={{ width: '100%', height: 500 }}
-              resizeMode="contain"
-              accessibilityLabel="Original report source page"
-            />
+          {!!image && sourcePage && (
+            <View
+              style={{
+                width: '100%',
+                aspectRatio: sourcePage.width / sourcePage.height,
+              }}
+            >
+              <Image
+                source={{ uri: image }}
+                style={{ width: '100%', height: '100%' }}
+                resizeMode="contain"
+                accessibilityLabel="Original report source page"
+              />
+              {detail.candidates
+                .filter((c) => c.pageNumber === previewNumber)
+                .map((c) => (
+                  <View
+                    key={c.id}
+                    pointerEvents="none"
+                    accessible={false}
+                    style={{
+                      position: 'absolute',
+                      borderWidth: 2,
+                      borderColor: theme.color.teal,
+                      left: `${Number(c.x0) * 100}%`,
+                      top: `${Number(c.y0) * 100}%`,
+                      width: `${(Number(c.x1) - Number(c.x0)) * 100}%`,
+                      height: `${(Number(c.y1) - Number(c.y0)) * 100}%`,
+                    }}
+                  />
+                ))}
+            </View>
           )}
           {detail.candidates.map((c) => (
             <Candidate
@@ -357,7 +391,12 @@ function Candidate({
     });
   return (
     <View
-      style={{ padding: 18, borderWidth: 1, borderColor: '#d8e2d2', gap: 15 }}
+      style={{
+        padding: 18,
+        borderWidth: 1,
+        borderColor: theme.color.border,
+        gap: 15,
+      }}
     >
       <Text>
         Source page {c.pageNumber}: {c.rawText}

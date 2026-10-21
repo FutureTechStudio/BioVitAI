@@ -1,12 +1,13 @@
+import { BioText as Text, theme, BioCard } from '../design-system';
 import { Action as Pressable, Field as TextInput } from '../action';
 import { useEffect, useState, useRef } from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { router } from 'expo-router';
 import { randomUUID } from 'expo-crypto';
 import { z } from 'zod';
 import { ExplanationSchema } from '../../../../shared/contracts/src/conversations';
 import { ObservationEvidenceSchema } from '../../../../shared/contracts/src/intelligence';
-import { useSession } from '../session';
+import { useSession, requestProfile } from '../session';
 import { nativeApi, NativeRequestError } from '../api';
 export default function Chat() {
   const session = useSession();
@@ -45,7 +46,8 @@ function Conversation() {
   }, [messages.length, id]);
   async function load(selected?: string) {
     const revision = ++loadRevision.current;
-    const ticket = guard.request();
+    const ticket = requestProfile(guard);
+    if (!ticket) return;
     const publish = (work: () => void) => {
       if (revision === loadRevision.current) guard.publish(ticket, work);
     };
@@ -113,7 +115,8 @@ function Conversation() {
   }, [id, busy]);
   async function consent(granted: boolean) {
     loadRevision.current++;
-    const ticket = guard.request();
+    const ticket = requestProfile(guard);
+    if (!ticket) return;
     try {
       await nativeApi(
         `/v1/profiles/${ticket.context.profileId}/consents`,
@@ -134,8 +137,9 @@ function Conversation() {
   }
   async function send() {
     loadRevision.current++;
+    const ticket = requestProfile(guard);
+    if (!ticket) return;
     setBusy(true);
-    const ticket = guard.request();
     try {
       const result = Message.omit({ question: true }).parse(
         await nativeApi(
@@ -211,7 +215,7 @@ function Conversation() {
           </Pressable>
         ))}
         {messages.map((m, i) => (
-          <View key={i} style={{ gap: 10 }}>
+          <BioCard key={i} style={{ gap: 10 }}>
             <Text>You: {m.question}</Text>
             {m.code && <Text>AI unavailable: {m.code}</Text>}
             {m.answer?.cards.map((card, j) => (
@@ -243,7 +247,7 @@ function Conversation() {
                 })}
               </View>
             ))}
-          </View>
+          </BioCard>
         ))}
       </ScrollView>
       <View
@@ -252,7 +256,7 @@ function Conversation() {
           paddingBottom: 32,
           gap: 10,
           borderTopWidth: 1,
-          borderColor: '#d8e2d2',
+          borderColor: theme.color.border,
         }}
       >
         <TextInput
@@ -265,7 +269,7 @@ function Conversation() {
           editable={!busy}
         />
         <Pressable
-          style={{ minHeight: 44, justifyContent: 'center' }}
+          style={{ minHeight: 48, justifyContent: 'center' }}
           disabled={busy || !question.trim()}
           onPress={() => void send()}
         >

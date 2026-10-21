@@ -1,6 +1,7 @@
+import { BioText as Text, theme, NativeBrand } from '../design-system';
 import { Action as Pressable, Field as TextInput } from '../action';
 import { useState } from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { View, ScrollView, StyleSheet } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { auth, nativeApi } from '../api';
 import { useSession } from '../session';
@@ -67,7 +68,7 @@ export default function Auth() {
       contentContainerStyle={s.page}
       keyboardShouldPersistTaps="handled"
     >
-      <Text style={s.brand}>biovitai ✳</Text>
+      <NativeBrand />
       <Text style={s.title}>
         {mode === 'signin'
           ? 'Welcome back.'
@@ -159,32 +160,35 @@ const s = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
     padding: 28,
-    backgroundColor: '#f7f8f3',
+    backgroundColor: theme.color.canvas,
   },
-  brand: {
-    fontSize: 34,
-    color: '#27614e',
-    fontWeight: '600',
-    marginBottom: 45,
-  },
-  title: { fontSize: 32, color: '#243f35', marginBottom: 15 },
+  title: { fontSize: 32, color: theme.color.ink, marginBottom: 15 },
   input: {
     padding: 15,
     borderWidth: 1,
-    borderColor: '#cbd8c7',
-    borderRadius: 8,
+    borderColor: theme.color.border,
+    borderRadius: theme.radius.control,
     marginBottom: 15,
-    backgroundColor: 'white',
+    backgroundColor: theme.color.white,
     fontSize: 16,
   },
-  button: { backgroundColor: '#27614e', padding: 17, borderRadius: 9 },
+  button: {
+    backgroundColor: theme.color.teal,
+    padding: 17,
+    borderRadius: theme.radius.control,
+  },
   buttonText: {
-    color: 'white',
+    color: theme.color.white,
     textAlign: 'center',
     fontSize: 16,
     fontWeight: '600',
   },
-  note: { fontSize: 13, color: '#64765e', lineHeight: 21, marginBottom: 20 },
+  note: {
+    fontSize: 13,
+    color: theme.color.slate,
+    lineHeight: 21,
+    marginBottom: 20,
+  },
   links: {
     flexDirection: 'row',
     justifyContent: 'space-between',

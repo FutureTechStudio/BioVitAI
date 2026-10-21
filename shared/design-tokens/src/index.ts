@@ -1,0 +1,60 @@
+/** BioFlow is the shared visual vocabulary. These tokens never imply clinical status. */
+export const bioflow = {
+  color: {
+    canvas: '#F5FAF7',
+    mint: '#EAF6F0',
+    white: '#FFFFFF',
+    teal: '#087F82',
+    hover: '#06676A',
+    celadon: '#D8F1E7',
+    green: '#15A86B',
+    aqua: '#2AAFC3',
+    blue: '#237DE0',
+    ink: '#172B4D',
+    slate: '#536779',
+    border: '#DDEBE6',
+    success: '#197550',
+    warning: '#926016',
+    error: '#B53D3D',
+    neutral: '#536B75',
+    errorSurface: '#FFF0EF',
+    infoSurface: '#EDF5FF',
+    transparent: 'transparent',
+    overlay: '#172B4D66',
+    body: '#DBEAE6',
+    bodyEdge: '#8BADAA',
+  },
+  radius: { card: 18, control: 12, pill: 999 },
+  space: { xs: 4, sm: 8, md: 12, lg: 16, xl: 24, xxl: 32 },
+  breakpoint: { mobile: 768, desktop: 1200 },
+  motion: { fast: 160, normal: 220 },
+  font: {
+    regular: 'Manrope',
+    medium: 'Manrope',
+    semibold: 'Manrope',
+    bold: 'Manrope',
+  },
+} as const;
+export const bodyOutline =
+  'M108 63 L108 76 C99 78 86 82 79 91 C73 105 63 143 55 180 L48 216 Q48 223 55 223 Q61 222 63 214 L80 161 L86 133 L85 206 Q84 223 91 239 L92 314 L96 414 L92 444 Q92 452 111 449 L117 337 L120 272 L123 337 L129 449 Q148 452 148 444 L144 414 L148 314 L149 239 Q156 223 155 206 L154 133 L160 161 L177 214 Q179 222 185 223 Q192 223 192 216 L185 180 C177 143 167 105 161 91 C154 82 141 78 132 76 L132 63';
+export const iconPaths: Record<string, string> = {
+  dashboard: 'M3 10 12 3l9 7v11h-6v-7H9v7H3Z',
+  health: 'M12 21S3 15 3 9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 6-9 12-9 12Z',
+  insights: 'M4 20V11m6 9V5m6 15v-8m5 8H2',
+  reports: 'M9 3v6L4 19q-1 2 2 2h12q3 0 2-2L15 9V3M8 3h8M7 15h10',
+  wellness: 'M20 4C8 3 3 9 5 16c5 4 13 1 15-12ZM5 20l10-10',
+  community:
+    'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM2 21v-3c0-6 14-6 14 0v3M17 5a3 3 0 0 1 0 6M18 14c3 0 4 2 4 4v3',
+  search: 'M10 17a7 7 0 1 0 0-14 7 7 0 0 0 0 14Zm5-2 6 6',
+  upload: 'M12 16V3m-5 5 5-5 5 5M4 14v6h16v-6',
+  bell: 'M18 8a6 6 0 0 0-12 0c0 8-3 8-3 10h18c0-2-3-2-3-10ZM9 21h6',
+  settings:
+    'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8ZM9 3h6l1 3 3 1 2 5-2 5-3 1-1 3H9l-1-3-3-1-2-5 2-5 3-1Z',
+  help: 'M9 8a3 3 0 1 1 4 3c-1 1-1 2-1 3m0 3v1M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Z',
+  chevron: 'm9 5 7 7-7 7',
+  close: 'm5 5 14 14M19 5 5 19',
+  menu: 'M3 6h18M3 12h18M3 18h18',
+  spark: 'm12 2 3 7 7 3-7 3-3 7-3-7-7-3 7-3Z',
+  check: 'm5 12 4 4L19 6',
+  brain: 'M12 4C6 0 2 7 5 10c-5 4 1 13 7 9 6 4 12-5 7-9 3-3-1-10-7-6Zm0 0v15',
+};

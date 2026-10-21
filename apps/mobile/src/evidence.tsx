@@ -1,14 +1,16 @@
+import { BioText as Text, theme } from './design-system';
 import { Action as Pressable } from './action';
 import { useEffect, useState } from 'react';
-import { Text, View } from 'react-native';
-import Svg, { Polyline, Path, Circle } from 'react-native-svg';
+import { View } from 'react-native';
+import Svg, { Polyline } from 'react-native-svg';
 import { router } from 'expo-router';
 import { z } from 'zod';
 import { HealthAnalysisSchema } from '../../../shared/contracts/src/intelligence';
 import { ObservationEvidenceSchema } from '../../../shared/contracts/src/intelligence';
 import type { Ingestion } from '../../../shared/contracts/src/reports';
 import { nativeApi } from './api';
-import { useSession } from './session';
+import { Field } from './action';
+import { useSession, requestProfile } from './session';
 export function Evidence({
   revision,
   reports,
@@ -20,8 +22,32 @@ export function Evidence({
     [data, setData] = useState<z.infer<typeof HealthAnalysisSchema> | null>(
       null,
     );
+  const [query, setQuery] = useState(''),
+    [from, setFrom] = useState(''),
+    [to, setTo] = useState(''),
+    [error, setError] = useState('');
+  const validDates =
+    (!from || z.iso.date().safeParse(from).success) &&
+    (!to || z.iso.date().safeParse(to).success) &&
+    (!from || !to || from <= to);
+  const cohorts =
+    data?.cohorts
+      .map((c) => ({
+        ...c,
+        observations: c.observations.filter(
+          (o) =>
+            (!from || (!!o.date && o.date >= from)) &&
+            (!to || (!!o.date && o.date <= to)),
+        ),
+      }))
+      .filter(
+        (c) =>
+          c.observations.length &&
+          c.label.toLowerCase().includes(query.toLowerCase()),
+      ) ?? [];
   useEffect(() => {
-    const ticket = guard.request();
+    const ticket = requestProfile(guard);
+    if (!ticket) return;
     void nativeApi(
       '/v1/health/intelligence',
       undefined,
@@ -32,39 +58,77 @@ export function Evidence({
         const result = HealthAnalysisSchema.parse(raw);
         guard.publish(ticket, () => setData(result));
       })
-      .catch(() => guard.publish(ticket, () => setData(null)));
+      .catch(() =>
+        guard.publish(ticket, () => {
+          setData(null);
+          setError(
+            'Health evidence unavailable. Return to My Health and refresh.',
+          );
+        }),
+      );
   }, [guard, revision]);
   return (
     <View style={{ gap: 14 }}>
       <Comparison reports={reports} />
       <Text style={{ fontSize: 23 }}>Verified evidence and trends</Text>
-      {!data?.cohorts.length && (
+      {!!error && <Text accessibilityRole="alert">{error}</Text>}
+      <Field
+        accessibilityLabel="Search biomarkers"
+        placeholder="Search verified biomarkers"
+        value={query}
+        onChangeText={setQuery}
+      />
+      <Field
+        accessibilityLabel="Observation date from"
+        placeholder="From YYYY-MM-DD"
+        value={from}
+        onChangeText={setFrom}
+      />
+      <Field
+        accessibilityLabel="Observation date to"
+        placeholder="To YYYY-MM-DD"
+        value={to}
+        onChangeText={setTo}
+      />
+      {!validDates && (
+        <Text accessibilityRole="alert">
+          Use valid YYYY-MM-DD dates with the end on or after the start.
+        </Text>
+      )}
+      {!data && !error && (
+        <Text accessibilityLiveRegion="polite">Loading health evidence…</Text>
+      )}
+      {data && !cohorts.length && !error && (
         <Text>
           No comparable trend is available. Missing context is excluded.
         </Text>
       )}
-      {data?.cohorts.map((c, i) => (
-        <View key={i} style={{ gap: 12 }}>
-          <Text style={{ fontSize: 20 }}>
-            {c.label} · {c.unit}
-          </Text>
-          {c.observations.length > 1 && <Trend rows={c.observations} />}
-          {c.observations.map((o) => (
-            <Pressable
-              key={o.id}
-              accessibilityRole="button"
-              onPress={() =>
-                router.push({ pathname: '/report', params: { id: o.reportId } })
-              }
-            >
-              <Text>
-                {o.date}: {o.value} {o.unit} · source page {o.pageNumber},
-                revision {o.revision}
-              </Text>
-            </Pressable>
-          ))}
-        </View>
-      ))}
+      {validDates &&
+        cohorts.map((c, i) => (
+          <View key={i} style={{ gap: 12 }}>
+            <Text style={{ fontSize: 20 }}>
+              {c.label} · {c.unit}
+            </Text>
+            {c.observations.length > 1 && <Trend rows={c.observations} />}
+            {c.observations.map((o) => (
+              <Pressable
+                key={o.id}
+                accessibilityRole="button"
+                onPress={() =>
+                  router.push({
+                    pathname: '/report',
+                    params: { id: o.reportId },
+                  })
+                }
+              >
+                <Text>
+                  {o.date}: {o.value} {o.unit} · source page {o.pageNumber},
+                  revision {o.revision}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+        ))}
       {data?.exclusions.map((e) => (
         <Pressable
           key={e.observation.id}
@@ -83,36 +147,6 @@ export function Evidence({
       ))}
       <Text>No averaging, conversion or unreviewed organ score is active.</Text>
       <Text style={{ fontSize: 23 }}>Organ evidence map</Text>
-      <View
-        accessible
-        accessibilityLabel="Evidence coverage diagram. Heart, liver, kidneys, thyroid and metabolic health are not assessed."
-      >
-        <Svg width={160} height={300} viewBox="0 0 160 300">
-          <Circle
-            cx={80}
-            cy={25}
-            r={19}
-            fill="#eef2eb"
-            stroke="#52645c"
-            strokeWidth={2}
-          />
-          <Path
-            d="M68 45v13L43 70 22 145l13 5 22-61-4 77 9 120h16l2-102 2 102h16l9-120-4-77 22 61 13-5-21-75-25-12V45"
-            fill="#eef2eb"
-            stroke="#52645c"
-            strokeWidth={2}
-          />
-          {[
-            [80, 65],
-            [88, 93],
-            [72, 122],
-            [65, 150],
-            [95, 150],
-          ].map(([x, y], i) => (
-            <Circle key={i} cx={x} cy={y} r={6} fill="#52645c" />
-          ))}
-        </Svg>
-      </View>
       {data?.organs.map((organ) => (
         <Text key={organ.name}>
           {organ.name}: not assessed. {organ.reason}
@@ -144,7 +178,7 @@ function Trend({
         <Polyline
           points={points}
           fill="none"
-          stroke="#27614e"
+          stroke={theme.color.teal}
           strokeWidth={3}
         />
       </Svg>
@@ -169,7 +203,8 @@ function Comparison({ reports }: { reports: Ingestion[] }) {
       }[]
     >([]);
   async function compare() {
-    const ticket = guard.request();
+    const ticket = requestProfile(guard);
+    if (!ticket) return;
     try {
       const data = await nativeApi(
           '/v1/health/comparisons',
@@ -219,7 +254,7 @@ function Comparison({ reports }: { reports: Ingestion[] }) {
           <Pressable
             key={r.id}
             accessibilityLabel={`Select comparison report ${r.fileName}`}
-            style={{ minHeight: 44, justifyContent: 'center' }}
+            style={{ minHeight: 48, justifyContent: 'center' }}
             onPress={() => {
               setPairs([]);
               setExclusions([]);
