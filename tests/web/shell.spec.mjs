@@ -175,7 +175,9 @@ test('real local upload, source verification, comparison and unconfigured AI jou
   ).toBeVisible();
   await page.getByRole('link', { name: 'Dashboard', exact: true }).click();
   await expect(page).toHaveURL(/\/dashboard$/);
-  await expect(page.locator('.metric-grid')).toBeVisible();
+  await expect(
+    page.getByRole('region', { name: 'Health story digest' }),
+  ).toBeVisible();
   await expect(
     page.getByRole('heading', { name: 'Your body insights', exact: true }),
   ).toBeVisible();

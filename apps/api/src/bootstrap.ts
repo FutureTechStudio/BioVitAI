@@ -33,6 +33,9 @@ import {
   createBudgetLedger,
 } from '../../../infrastructure/ai-gateway/postgres.js';
 import { createOpenAIHealthGateway } from '../../../infrastructure/ai-gateway/provider.js';
+import { createJourneyRepository } from '../../../modules/health/src/infrastructure/journey.js';
+import { createJourneyService } from '../../../modules/health/src/application/journey.js';
+import { createJourneyController } from './controllers/journey.js';
 
 export function createLocalApplication(
   runtime: RuntimeConfig,
@@ -79,6 +82,10 @@ export function createLocalApplication(
     createPrivateObjectSecurity(config.secret),
   );
   const reportController = createReportController(reportService);
+  const journey = createJourneyRepository(pool, config.secret);
+  const journeyController = createJourneyController(
+    createJourneyService(profileService, journey),
+  );
   const conversationController = createConversationController(
     createConversationService(
       profileService,
@@ -96,6 +103,7 @@ export function createLocalApplication(
         await objectMetadata.ready();
         await jobs.ready();
         await reports.ready();
+        await journey.ready();
       },
       close: () => pool.end(),
     }),
@@ -107,11 +115,13 @@ export function createLocalApplication(
       profiles: createProfileController(profileService),
       storage: createPrivateObjectController(objects),
       health: (request, actor) =>
-        /\/v1\/health\/(?:conversations|messages)(?:\/|$)/.test(
-          new URL(request.url).pathname,
-        )
-          ? conversationController(request, actor)
-          : reportController(request, actor),
+        /\/v1\/health\/journey(?:\/|$)/.test(new URL(request.url).pathname)
+          ? journeyController(request, actor)
+          : /\/v1\/health\/(?:conversations|messages)(?:\/|$)/.test(
+                new URL(request.url).pathname,
+              )
+            ? conversationController(request, actor)
+            : reportController(request, actor),
     },
   );
   return { server, close: () => pool.end() };

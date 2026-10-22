@@ -1,0 +1,164 @@
+[
+  {
+    "ID": "CJ-001",
+    "Workstream": "Experience/domain contracts: record authority, date precision, source types, permission/consent matrix, route ownership and fact/claim language.",
+    "Status": "Done",
+    "Dependencies": "Current source baseline",
+    "Related Tasks": "BV-009–BV-013; BV-019–BV-028",
+    "Evidence": "docs/engineering/HEALTH-STORY-1.md",
+    "Notes": "Health Story 1 local engineering complete: web/native journeys, permissions, encryption and restore verified. Clinical activation, manual accessibility, physical devices and participant signoff remain separate."
+  },
+  {
+    "ID": "CJ-002",
+    "Workstream": "Typed conditions/medication/allergy/context assertions and documented instructions; confirmation/conflict workflow.",
+    "Status": "Done",
+    "Dependencies": "CJ-001",
+    "Related Tasks": "Health scope extension; BV-010",
+    "Evidence": "docs/engineering/HEALTH-STORY-1.md",
+    "Notes": "Health Story 1 local engineering complete: web/native journeys, permissions, encryption and restore verified. Clinical activation, manual accessibility, physical devices and participant signoff remain separate."
+  },
+  {
+    "ID": "CJ-003",
+    "Workstream": "Journey projection, existing-report backfill, timeline filters, source drilldown and undated lane.",
+    "Status": "Done",
+    "Dependencies": "CJ-001; CJ-002 for new context kinds",
+    "Related Tasks": "BV-010; BV-019–BV-023",
+    "Evidence": "docs/engineering/HEALTH-STORY-1.md",
+    "Notes": "Health Story 1 local engineering complete: web/native journeys, permissions, encryption and restore verified. Clinical activation, manual accessibility, physical devices and participant signoff remain separate."
+  },
+  {
+    "ID": "CJ-004",
+    "Workstream": "Change digest, actor review checkpoint, workflow/user priority queue and Dashboard simplification.",
+    "Status": "Done",
+    "Dependencies": "CJ-003",
+    "Related Tasks": "BV-012; BV-020",
+    "Evidence": "docs/engineering/HEALTH-STORY-1.md",
+    "Notes": "Health Story 1 local engineering complete: web/native journeys, permissions, encryption and restore verified. Clinical activation, manual accessibility, physical devices and participant signoff remain separate."
+  },
+  {
+    "ID": "CJ-005",
+    "Workstream": "Knowledge definitions, review/activation/withdrawal ledger, privileged administration and version fixtures.",
+    "Status": "Backlog",
+    "Dependencies": "CJ-001",
+    "Related Tasks": "BV-019–BV-023; BV-034",
+    "Evidence": "documentation/product-experience/DELIVERY-AND-ACCEPTANCE.md",
+    "Notes": "Proposed scope. No capability, clinical content activation or approval is implied."
+  },
+  {
+    "ID": "CJ-006",
+    "Workstream": "Focus taxonomy/mapping and evidence membership, including user collections and visible non-assessment.",
+    "Status": "Backlog",
+    "Dependencies": "CJ-003; CJ-005",
+    "Related Tasks": "BV-019–BV-023",
+    "Evidence": "documentation/product-experience/DELIVERY-AND-ACCEPTANCE.md",
+    "Notes": "Proposed scope. No capability, clinical content activation or approval is implied."
+  },
+  {
+    "ID": "CJ-007",
+    "Workstream": "Connected insights, factual change detail, knowledge applicability and constrained next-step presentation.",
+    "Status": "Backlog",
+    "Dependencies": "CJ-002; CJ-005; CJ-006",
+    "Related Tasks": "BV-019–BV-023",
+    "Evidence": "documentation/product-experience/DELIVERY-AND-ACCEPTANCE.md",
+    "Notes": "Proposed scope. No capability, clinical content activation or approval is implied."
+  },
+  {
+    "ID": "CJ-008",
+    "Workstream": "Contextual read tools and versioned AI citation/answer schemas for timeline, context and focus evidence.",
+    "Status": "Backlog",
+    "Dependencies": "CJ-003; CJ-007 for focus tools",
+    "Related Tasks": "BV-024–BV-028",
+    "Evidence": "documentation/product-experience/DELIVERY-AND-ACCEPTANCE.md",
+    "Notes": "Proposed scope. No capability, clinical content activation or approval is implied."
+  },
+  {
+    "ID": "CJ-009",
+    "Workstream": "Wellness baseline, user goals, prospective opportunities, manual check-ins and pause/history.",
+    "Status": "Backlog",
+    "Dependencies": "CJ-001",
+    "Related Tasks": "BV-033; BV-036; BV-040",
+    "Evidence": "documentation/product-experience/DELIVERY-AND-ACCEPTANCE.md",
+    "Notes": "Proposed scope. No capability, clinical content activation or approval is implied."
+  },
+  {
+    "ID": "CJ-010",
+    "Workstream": "Reviewed action catalogue and impact detail: targets, evidence, variants, restrictions and licensing.",
+    "Status": "Backlog",
+    "Dependencies": "CJ-005",
+    "Related Tasks": "BV-034",
+    "Evidence": "documentation/product-experience/DELIVERY-AND-ACCEPTANCE.md",
+    "Notes": "Proposed scope. No capability, clinical content activation or approval is implied."
+  },
+  {
+    "ID": "CJ-011",
+    "Workstream": "Deterministic eligibility, consented health summary, burden-aware selection and accepted plan versioning.",
+    "Status": "Backlog",
+    "Dependencies": "CJ-002; CJ-009; CJ-010",
+    "Related Tasks": "BV-034; BV-035",
+    "Evidence": "documentation/product-experience/DELIVERY-AND-ACCEPTANCE.md",
+    "Notes": "Proposed scope. No capability, clinical content activation or approval is implied."
+  },
+  {
+    "ID": "CJ-012",
+    "Workstream": "Reflection, recovery, user-confirmed adaptation and behavior/outcome view.",
+    "Status": "Backlog",
+    "Dependencies": "CJ-009; CJ-011 for recommended plans",
+    "Related Tasks": "BV-036; BV-040; BV-041",
+    "Evidence": "documentation/product-experience/DELIVERY-AND-ACCEPTANCE.md",
+    "Notes": "Proposed scope. No capability, clinical content activation or approval is implied."
+  },
+  {
+    "ID": "CJ-013",
+    "Workstream": "Wellness assistant read tools and later explicit draft-to-confirmed-write proposals.",
+    "Status": "Backlog",
+    "Dependencies": "CJ-008; CJ-011; CJ-012 as applicable",
+    "Related Tasks": "BV-037",
+    "Evidence": "documentation/product-experience/DELIVERY-AND-ACCEPTANCE.md",
+    "Notes": "Proposed scope. No capability, clinical content activation or approval is implied."
+  },
+  {
+    "ID": "CJ-014",
+    "Workstream": "Reviewed education and private question-saving with independent Community identity/trust boundary.",
+    "Status": "Backlog",
+    "Dependencies": "CJ-005; CJ-002 for private question records",
+    "Related Tasks": "BV-042; BV-043; BV-045",
+    "Evidence": "documentation/product-experience/DELIVERY-AND-ACCEPTANCE.md",
+    "Notes": "Proposed scope. No capability, clinical content activation or approval is implied."
+  },
+  {
+    "ID": "CJ-015",
+    "Workstream": "Cross-module generation/invalidation, data lifecycle, privacy-aware search, restore/rebuild and operational metrics.",
+    "Status": "In Progress",
+    "Dependencies": "CJ-001 onward, incrementally",
+    "Related Tasks": "BV-011; BV-029–BV-031; BV-047–BV-048",
+    "Evidence": "docs/engineering/HEALTH-STORY-1.md",
+    "Notes": "J1 includes source invalidation, permissions and encrypted restore. Future module invalidation and wider lifecycle work remain."
+  },
+  {
+    "ID": "CJ-016",
+    "Workstream": "Web/native journey QA, accessibility, comprehension study plan, content/claims review and staged rollout evidence.",
+    "Status": "In Progress",
+    "Dependencies": "Each slice; final integrated run",
+    "Related Tasks": "BV-029–BV-032; BV-041; BV-049–BV-051",
+    "Evidence": "docs/engineering/HEALTH-STORY-1.md",
+    "Notes": "J1 automated QA recorded; manual accessibility, physical devices, participants and final integrated rollout remain."
+  },
+  {
+    "ID": "CJ-017",
+    "Workstream": "Optional manual-vital expansion, device connectors and preference-driven delivered reminders.",
+    "Status": "Backlog",
+    "Dependencies": "CJ-003; CJ-009; separate consent/operations design",
+    "Related Tasks": "BV-038; BV-039",
+    "Evidence": "documentation/product-experience/DELIVERY-AND-ACCEPTANCE.md",
+    "Notes": "Proposed scope. No capability, clinical content activation or approval is implied."
+  },
+  {
+    "ID": "CJ-018",
+    "Workstream": "Optional professional submissions and moderated community participation.",
+    "Status": "Backlog",
+    "Dependencies": "CJ-014; staffed moderation and policy",
+    "Related Tasks": "BV-044–BV-046",
+    "Evidence": "documentation/product-experience/DELIVERY-AND-ACCEPTANCE.md",
+    "Notes": "Proposed scope. No capability, clinical content activation or approval is implied."
+  }
+]

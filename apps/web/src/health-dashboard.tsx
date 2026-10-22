@@ -14,6 +14,7 @@ import type { PublicProfile } from '../../../shared/contracts/src/web';
 import type { createProfileView } from '../../../shared/profile-context/src/index';
 import { bodyOutline } from '../../../shared/design-tokens/src/index';
 import { reportRequest, ApiError, friendlyError } from './api';
+import { JourneyDigest } from './health-story';
 import {
   BioCard,
   EmptyState,
@@ -166,24 +167,28 @@ export function HealthDashboard({
           <br />A clearer picture over time.
         </p>
       </section>
-      <div className="metric-grid">
-        {metrics.map((m) => (
-          <Link
-            href={m.href}
-            className={`card metric-card tone-${m.tone}`}
-            key={m.label}
-          >
-            <span className="metric-icon">
-              <Icon name={m.icon} />
-            </span>
-            <div>
-              <h2>{m.label}</h2>
-              <div className="metric-value">{m.value}</div>
-              <small>{m.note}</small>
-            </div>
-          </Link>
-        ))}
-      </div>
+      <JourneyDigest guard={guard} />
+      <details className="supporting-record-counts">
+        <summary>Record summary · counts and sources</summary>
+        <div className="metric-grid">
+          {metrics.map((m) => (
+            <Link
+              href={m.href}
+              className={`card metric-card tone-${m.tone}`}
+              key={m.label}
+            >
+              <span className="metric-icon">
+                <Icon name={m.icon} />
+              </span>
+              <div>
+                <h2>{m.label}</h2>
+                <div className="metric-value">{m.value}</div>
+                <small>{m.note}</small>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </details>
       <div className="dashboard-grid">
         <BodyInsights organs={analysis.organs} />
         <div className="dashboard-side">

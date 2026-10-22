@@ -68,7 +68,7 @@ test(
         assert.equal(
           (await pool.query('SELECT count(*) FROM biovitai_migrations')).rows[0]
             .count,
-          '11',
+          '12',
         );
         assert.equal(
           (await pool.query('SELECT count(*) FROM health_rule_versions'))

@@ -294,7 +294,11 @@ export function Shell({
             </button>
           </form>
           <div className="top-actions">
-            <Link className="secondary top-upload" href="/reports#upload">
+            <Link
+              className="secondary top-upload"
+              href="/reports#upload"
+              aria-label="Upload report"
+            >
               <Icon name="upload" />
               <span>Upload report</span>
             </Link>

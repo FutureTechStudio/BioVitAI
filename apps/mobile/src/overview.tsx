@@ -10,6 +10,7 @@ import { nativeApi } from './api';
 import { useSession, requestProfile } from './session';
 import { BioCard, BioText as Text, NativeIcon, theme } from './design-system';
 import { Action } from './action';
+import { NativeJourneyDigest } from './story';
 export function NativeOverview({ reports }: { reports: Ingestion[] }) {
   const { guard, context } = useSession();
   const [analysis, setAnalysis] = useState<z.infer<
@@ -64,6 +65,7 @@ export function NativeOverview({ reports }: { reports: Ingestion[] }) {
         </Text>
         <Text>Verified evidence, with sources you can explore.</Text>
       </BioCard>
+      <NativeJourneyDigest />
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
         {metrics.map(([name, value]) => (
           <BioCard key={name} style={{ width: '47%', padding: 14, gap: 4 }}>

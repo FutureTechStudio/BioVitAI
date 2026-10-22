@@ -23,7 +23,7 @@ test(
     assert.equal(
       (await fixture.pool.query('SELECT count(*) FROM biovitai_migrations'))
         .rows[0].count,
-      '11',
+      '12',
     );
     const messages = [];
     const origin = `http://127.0.0.1:${await freePort()}`;

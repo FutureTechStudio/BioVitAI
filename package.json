@@ -31,7 +31,7 @@
     "reports:worker": "node --env-file=.env.local tools/run-report-worker.mjs",
     "pilot:backup": "node --env-file=.env.local tools/pilot-backup.mjs",
     "pilot:ops": "node --env-file=.env.local tools/pilot-ops.mjs",
-    "lint": "eslint . && node tools/check-boundaries.mjs && node tools/check-p0-gate.mjs && npm run bioflow:check",
+    "lint": "eslint . && node tools/check-boundaries.mjs && node tools/check-p0-gate.mjs && npm run bioflow:check && node tools/journey-tracker.mjs --check",
     "bioflow:check": "node tools/bioflow-tokens.mjs --check && node tools/check-bioflow.mjs && node tools/bioflow-coverage.mjs --check && node tools/bioflow-tracker.mjs --check",
     "gate:p0": "node tools/check-p0-gate.mjs --require-open",
     "gate:p0:full": "node tools/check-p0-gate.mjs --full-review --require-open",

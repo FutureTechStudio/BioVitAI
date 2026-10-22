@@ -1,5 +1,7 @@
 # BiovitAI
 
+[Health Story 1](docs/engineering/HEALTH-STORY-1.md) connects existing reports to a source-linked timeline, reported personal context, immutable corrections and a Dashboard change digest on web and Android. It is the first delivered increment of the [connected journey blueprint](documentation/product-experience/README.md); clinical interpretation and wider AI context remain separate planned work.
+
 Local modular-monolith foundation with PostgreSQL, verified-email authentication, separate self-owned profiles, invitation-based family permissions, consent records and audit. See [identity setup](docs/engineering/IDENTITY-IMPLEMENTATION.md) and [profile/consent API](docs/engineering/PROFILE-IMPLEMENTATION.md).
 
 Managed family profiles work without email, with optional contact updates and later verified invitations. The Next.js web application and Expo Android application include authentication, three tabs and a family picker that resets private views on switching.
@@ -15,6 +17,8 @@ The owner has [deferred specialist reviewer signoffs](docs/p0/REVIEW-DEFERRAL.md
 The authoritative baseline is [documentation v2.1](documentation/BiovitAI-Documentation-v2.1/README.md). Its original requirements and archives are preserved.
 
 The current web presentation and executed checks are recorded in the [BioFlow refinement record](documentation/design-system/BIOFLOW-REFINEMENTS-2026-10-22.md), including avatar profile controls, the floating session-aware assistant and distinct tab layouts.
+
+The proposed [connected health journey blueprint](documentation/product-experience/README.md) designs each module around longitudinal understanding, connected evidence, user-chosen actions and follow-up. It includes module experiences, the intelligence/data model and a staged acceptance plan; its proposed capabilities are not implementation or approval claims.
 
 ## Local checks
 

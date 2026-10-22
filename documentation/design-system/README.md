@@ -9,3 +9,5 @@ The inventory distinguishes engineering migration from functional, visual, respo
 The original application is checkpointed at `ced0d80bfe70d81258acadf63eca85b06fb2a9ba` on GitHub before this work. Implementation is on `codex/bioflow-ui`.
 
 Read [the validation report](VALIDATION-REPORT.md) for executed checks, module statuses, screenshots, measurements and unresolved acceptance limits. The coverage matrix records source migration and each validation dimension separately.
+
+The [connected health journey blueprint](../product-experience/README.md) supplies the next layer of product purpose: module responsibilities, content hierarchies, cross-page journeys and acceptance. [Health Story 1](../../docs/engineering/HEALTH-STORY-1.md) is its first implementation, extending the inventory with timeline, context, correction/history and digest surfaces. BioFlow remains the presentation foundation; proposed future screens are not counted as completed migration surfaces.

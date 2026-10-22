@@ -125,6 +125,8 @@ for (const [name, states] of Object.entries({
     'Identity confirmation, quantity/comparator, qualitative, missing, reference text, metadata, manual candidate, correction and relationships',
   Evidence:
     'Loading, empty, incompatible/excluded, tied dates, source pages, failed preview, chart alternatives and organ not-assessed',
+  'Health story':
+    'Dated/approximate/undated timeline, reported context, document source withheld, read-only access, append correction/conflict, history, checkpoint/digest, stale pagination and profile reset',
   Assistant:
     'Consent required/withdrawn, history, sending, citations, stale evidence, unavailable/provider/budget failure',
   Wellness:

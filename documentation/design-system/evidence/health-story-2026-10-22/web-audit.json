@@ -1,0 +1,55 @@
+{
+  "kind": "synthetic local presentation audit",
+  "results": [
+    {
+      "surface": "web-health-story",
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "surface": "web-timeline-context",
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "surface": "web-story-history",
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "surface": "web-story-editor",
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "surface": "web-story-1024",
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "surface": "web-story-390",
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "surface": "web-story-320",
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "surface": "web-story-rtl-large",
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "surface": "web-story-dashboard",
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "surface": "web-story-source",
+      "violations": [],
+      "overflow": false
+    }
+  ]
+}

@@ -65,6 +65,11 @@ def validate():
         assert {k: v for k, v in old.items() if k not in {'Status', 'Notes'}} == {k: v for k, v in current.items() if k not in {'Status', 'Notes'}}, current['ID']
     ns = {'s': 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'}
     with ZipFile(PM / 'BiovitAI_v2_1_Development_Tracker.xlsx') as archive:
+        # Validate package XML as well as cell data: missing namespace declarations
+        # can otherwise leave a visually authored sheet inaccessible to Excel.
+        for name in archive.namelist():
+            if name.endswith(('.xml', '.rels')):
+                ET.fromstring(archive.read(name))
         strings = []
         if 'xl/sharedStrings.xml' in archive.namelist():
             strings = [''.join(item.itertext()) for item in ET.fromstring(archive.read('xl/sharedStrings.xml'))]
@@ -100,7 +105,31 @@ def validate():
             assert decision_values[f'A{index}'] == row['ID']
             assert decision_values[f'E{index}'] == row['Status'], row['ID']
             assert decision_values[f'F{index}'] == row['Notes'], row['ID']
+        journey = json.loads((PM / 'Connected_Journey_Tracker.json').read_text(encoding='utf8'))
+        with (PM / 'Connected_Journey_Tracker.csv').open(encoding='utf8', newline='') as source:
+            assert list(csv.DictReader(source)) == journey
+        book = ET.fromstring(archive.read('xl/workbook.xml'))
+        sheet = next(s for s in book.findall('s:sheets/s:sheet', ns) if s.get('name') == 'Journey')
+        rid = sheet.get('{http://schemas.openxmlformats.org/officeDocument/2006/relationships}id')
+        relationships = ET.fromstring(archive.read('xl/_rels/workbook.xml.rels'))
+        location = next(r.get('Target') for r in relationships if r.get('Id') == rid)
+        part = location.lstrip('/') if location.startswith('/') else 'xl/' + location
+        values = {}
+        for cell in ET.fromstring(archive.read(part)).findall('.//s:sheetData/s:row/s:c', ns):
+            raw = cell.find('s:v', ns)
+            value = raw.text if raw is not None else ''
+            if cell.get('t') == 's':
+                value = strings[int(value)]
+            elif cell.get('t') == 'inlineStr':
+                value = ''.join(cell.find('s:is', ns).itertext())
+            values[cell.get('r')] = value
+        assert len(journey) == 18 and values['A4'] == 'ID'
+        columns = ['ID', 'Workstream', 'Status', 'Dependencies', 'Related Tasks', 'Evidence', 'Notes']
+        for index, record in enumerate(journey, 5):
+            for column, key in zip('ABCDEFG', columns):
+                assert values[column + str(index)] == record[key], record['ID'] + ': ' + key
     print('PASS: 51 tasks and 10 decisions reconciled across CSV/JSON/XLSX; baseline fields and dependency gates preserved')
+    print('PASS: 18 connected journey epics reconcile across CSV/JSON/XLSX; workbook XML is well-formed')
 
 
 if __name__ == '__main__':

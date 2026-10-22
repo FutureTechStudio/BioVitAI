@@ -53,6 +53,7 @@ export function ReportCenter({
     [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1),
     [image, setImage] = useState<string | null>(null);
+  const [focusedField, setFocusedField] = useState<string | null>(null);
   const selection = useRef(0),
     imageVersion = useRef(0),
     uploadKey = useRef<string | null>(null);
@@ -83,8 +84,14 @@ export function ReportCenter({
   }, [guard]);
   useEffect(() => {
     void refresh();
-    const requested = new URL(window.location.href).searchParams.get('report');
-    if (z.uuid().safeParse(requested).success) void open(requested!);
+    const params = new URL(window.location.href).searchParams;
+    const requested = params.get('report');
+    if (z.uuid().safeParse(requested).success)
+      void open(
+        requested!,
+        Number(params.get('page') ?? 1),
+        params.get('field'),
+      );
   }, [refresh]);
   useEffect(() => {
     const timer = setInterval(
@@ -97,12 +104,17 @@ export function ReportCenter({
     );
     return () => clearInterval(timer);
   }, [reports, refresh]);
-  async function open(id: string) {
+  async function open(
+    id: string,
+    requestedPage = 1,
+    field: string | null = null,
+  ) {
     const generation = ++selection.current,
       ticket = guard.request();
     setDetail(null);
     setError('');
     setPage(1);
+    setFocusedField(null);
     try {
       const data = ReportDetailSchema.parse(
         await reportRequest(`/v1/health/reports/${id}`, ticket.context, {
@@ -110,7 +122,17 @@ export function ReportCenter({
         }),
       );
       guard.publish(ticket, () => {
-        if (generation === selection.current) setDetail(data);
+        if (generation === selection.current) {
+          setDetail(data);
+          if (data.pages.some((p) => p.number === requestedPage))
+            setPage(requestedPage);
+          if (
+            data.candidates.some(
+              (c) => c.rawFieldId === field && c.pageNumber === requestedPage,
+            )
+          )
+            setFocusedField(field);
+        }
       });
     } catch (cause) {
       guard.publish(ticket, () => setError(message(cause)));
@@ -494,6 +516,12 @@ export function ReportCenter({
                     ))}
                   </select>
                 </label>
+                {focusedField && (
+                  <p className="notice">
+                    The linked result region is highlighted in blue. Check its
+                    original text below.
+                  </p>
+                )}
                 {image ? (
                   <div
                     style={{
@@ -516,7 +544,11 @@ export function ReportCenter({
                           style={{
                             position: 'absolute',
                             pointerEvents: 'none',
-                            border: '2px solid var(--bf-teal)',
+                            outline:
+                              c.rawFieldId === focusedField
+                                ? '2px solid var(--bf-blueInk)'
+                                : '1px solid var(--bf-teal)',
+                            outlineOffset: 1,
                             left: `${Number(c.x0) * 100}%`,
                             top: `${Number(c.y0) * 100}%`,
                             width: `${(Number(c.x1) - Number(c.x0)) * 100}%`,

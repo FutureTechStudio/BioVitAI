@@ -12,6 +12,7 @@ import {
 } from './design-system';
 import { BodyInsights, useHealthSnapshot } from './health-dashboard';
 import { ReportCenter } from './report-center';
+import { HealthStory } from './health-story';
 function PageArtwork({ kind }: { kind: 'wellness' | 'community' | 'health' }) {
   return (
     <div className={`page-artwork artwork-${kind}`} aria-hidden="true">
@@ -90,6 +91,7 @@ export function HealthHome({
         </div>
         <PageArtwork kind="health" />
       </section>
+      <HealthStory guard={guard} profileName={profile.displayName} />
       <div className="journey-grid">
         <JourneyLink
           href="/reports#upload"

@@ -15,29 +15,63 @@ import { useSession, requestProfile } from '../session';
 import { nativeApi, previewPage, NativeRequestError } from '../api';
 export default function Report() {
   const session = useSession(),
-    { id } = useLocalSearchParams<{ id: string }>();
+    {
+      id,
+      page: requestedPage,
+      field,
+    } = useLocalSearchParams<{ id: string; page?: string; field?: string }>();
   return session.context.profile ? (
     <Review
       key={`${session.context.profile.id}:${session.context.revision}:${id}`}
       id={id}
+      initialPage={Number(requestedPage ?? 1)}
+      focusedField={field ?? null}
     />
   ) : (
     <Text>Select a profile first.</Text>
   );
 }
-function Review({ id }: { id: string }) {
+function Review({
+  id,
+  initialPage,
+  focusedField,
+}: {
+  id: string;
+  initialPage: number;
+  focusedField: string | null;
+}) {
   const { guard } = useSession(),
     [detail, setDetail] = useState<ReportDetail | null>(null),
     [message, setMessage] = useState(''),
     [reason, setReason] = useState(''),
     [image, setImage] = useState(''),
-    [previewNumber, setPreviewNumber] = useState(1),
+    [sourceViewport, setSourceViewport] = useState(0),
+    [sourceZoom, setSourceZoom] = useState(1),
+    [previewNumber, setPreviewNumber] = useState(
+      Number.isInteger(initialPage) && initialPage >= 1 && initialPage <= 50
+        ? initialPage
+        : 1,
+    ),
     [reports, setReports] = useState<z.infer<typeof IngestionSchema>[]>([]),
     [related, setRelated] = useState(''),
     [relation, setRelation] = useState<'rerun' | 'amendment'>('rerun'),
     [relationReason, setRelationReason] = useState(''),
     [busy, setBusy] = useState(false);
   const imageRevision = useRef(0);
+  const sourceScroller = useRef<ScrollView>(null);
+  function zoomSource(value: number) {
+    sourceScroller.current?.scrollTo({ x: 0, animated: false });
+    setSourceZoom(Math.max(1, Math.min(4, value)));
+  }
+  const linkedPageLoaded = useRef(false);
+  useEffect(() => {
+    if (linkedPageLoaded.current || !detail?.pages.length) return;
+    linkedPageLoaded.current = true;
+    const target = detail.pages.some((p) => p.number === initialPage)
+      ? initialPage
+      : detail.pages[0]!.number;
+    void page(target);
+  }, [detail?.report.id, detail?.pages.length, initialPage]);
   const sourcePage = detail?.pages.find((p) => p.number === previewNumber);
   async function load() {
     const ticket = requestProfile(guard);
@@ -184,35 +218,89 @@ function Review({ id }: { id: string }) {
           ))}
           {!!image && sourcePage && (
             <View
-              style={{
-                width: '100%',
-                aspectRatio: sourcePage.width / sourcePage.height,
-              }}
+              onLayout={(event) =>
+                setSourceViewport(event.nativeEvent.layout.width)
+              }
+              style={{ width: '100%', gap: 8 }}
             >
-              <Image
-                source={{ uri: image }}
-                style={{ width: '100%', height: '100%' }}
-                resizeMode="contain"
-                accessibilityLabel="Original report source page"
-              />
-              {detail.candidates
-                .filter((c) => c.pageNumber === previewNumber)
-                .map((c) => (
-                  <View
-                    key={c.id}
-                    pointerEvents="none"
-                    accessible={false}
-                    style={{
-                      position: 'absolute',
-                      borderWidth: 2,
-                      borderColor: theme.color.teal,
-                      left: `${Number(c.x0) * 100}%`,
-                      top: `${Number(c.y0) * 100}%`,
-                      width: `${(Number(c.x1) - Number(c.x0)) * 100}%`,
-                      height: `${(Number(c.y1) - Number(c.y0)) * 100}%`,
-                    }}
+              <Text>Source zoom: {Math.round(sourceZoom * 100)}%</Text>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+                <Pressable
+                  accessibilityLabel="Zoom out source page"
+                  disabled={sourceZoom <= 1}
+                  onPress={() => zoomSource(sourceZoom - 0.5)}
+                >
+                  <Text>Zoom out</Text>
+                </Pressable>
+                <Pressable
+                  accessibilityLabel="Zoom in source page"
+                  disabled={sourceZoom >= 4}
+                  onPress={() => zoomSource(sourceZoom + 0.5)}
+                >
+                  <Text>Zoom in</Text>
+                </Pressable>
+                <Pressable
+                  accessibilityLabel="Reset source page zoom"
+                  disabled={sourceZoom === 1}
+                  onPress={() => zoomSource(1)}
+                >
+                  <Text>Reset</Text>
+                </Pressable>
+              </View>
+              <Text>
+                Zoom in and swipe sideways to inspect the original text.
+              </Text>
+              <ScrollView
+                ref={sourceScroller}
+                horizontal
+                nestedScrollEnabled
+                style={{
+                  width: '100%',
+                  height: Math.max(
+                    1,
+                    (sourceViewport * sourceZoom * sourcePage.height) /
+                      sourcePage.width,
+                  ),
+                  flexGrow: 0,
+                }}
+              >
+                <View
+                  style={{
+                    width: Math.max(1, sourceViewport * sourceZoom),
+                    aspectRatio: sourcePage.width / sourcePage.height,
+                  }}
+                >
+                  <Image
+                    source={{ uri: image }}
+                    style={{ width: '100%', height: '100%' }}
+                    resizeMode="contain"
+                    accessibilityLabel="Original report source page"
                   />
-                ))}
+                  {detail.candidates
+                    .filter((c) => c.pageNumber === previewNumber)
+                    .map((c) => (
+                      <View
+                        key={c.id}
+                        pointerEvents="none"
+                        accessible={false}
+                        style={{
+                          position: 'absolute',
+                          outlineWidth: c.rawFieldId === focusedField ? 1 : 0.5,
+                          outlineStyle: 'solid',
+                          outlineOffset: 1,
+                          outlineColor:
+                            c.rawFieldId === focusedField
+                              ? theme.color.blueInk
+                              : theme.color.teal,
+                          left: `${Number(c.x0) * 100}%`,
+                          top: `${Number(c.y0) * 100}%`,
+                          width: `${(Number(c.x1) - Number(c.x0)) * 100}%`,
+                          height: `${(Number(c.y1) - Number(c.y0)) * 100}%`,
+                        }}
+                      />
+                    ))}
+                </View>
+              </ScrollView>
             </View>
           )}
           {detail.candidates.map((c) => (

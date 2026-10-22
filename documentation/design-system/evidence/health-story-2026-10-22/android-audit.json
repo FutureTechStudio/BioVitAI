@@ -1,0 +1,26 @@
+{
+  "kind": "automated synthetic emulator rehearsal",
+  "date": "2026-10-22",
+  "platform": "Android API 36; 720 × 1280; density 320",
+  "runtime": "Debug app with local Metro and loopback backend",
+  "freshSignIn": true,
+  "participantResearch": false,
+  "milestones": [
+    "native authenticated health story and timeline",
+    "native reported medicine saved with approximate date and attribution",
+    "native append correction and revision history",
+    "native exact source-page navigation and preview",
+    "native family switch clears prior story and editor",
+    "native 150 percent text retains story and profile controls"
+  ],
+  "limitations": [
+    "Manual TalkBack, native RTL, physical-device and iOS acceptance remain pending."
+  ],
+  "sourceViewerRecheck": {
+    "zoomPercent": 200,
+    "horizontalPan": true,
+    "resetPercent": 100,
+    "textPreservingOutlines": true,
+    "resetRestoresFullPage": true
+  }
+}
